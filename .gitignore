@@ -47,3 +47,9 @@ coverage.xml
 .deps
 .libs
 *~
+
+dstlibvenv
+workspaces
+environment_variables.txt
+*.log
+

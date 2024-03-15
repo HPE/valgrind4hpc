@@ -45,8 +45,9 @@ product_dependencies:
  - cray-cti <cti_version_range> installed
  - cdst-support <cdst_version_range> installed
 os_dependencies:
- - HPE/Cray Shasta systems with SLES 15 SP3 and SP4
- - HPE Apollo systems with Slurm and RH 8.6
+ - HPE CSM systems with SLES 15 SP4
+ - HPE HPCM systems with SLES 15 SP5 and RHEL 8.8
+ - HPE Apollo systems with RHEL 8.8
 documentation: |
  - See man valgrind4hpc.
 installation_instructions: |
