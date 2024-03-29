@@ -298,32 +298,42 @@ mrnet_data_callback(MRN::Event* e, void * cb_data)
 #include <iomanip>
 static void
 usage(char* const* argv, int code) {
-	auto& out = (code > 0) ? std::cerr : std::cout;
+	auto& out = (code > 0) ? stderr : stdout;
 
-	out << "Usage: " << argv[0] << " [VALGRIND4HPC OPTIONS]... executable -- [EXECUTABLE OPTIONS]..." << std::endl;
-	out << "Check for memory leaks and errors and aggregate results from multiple ranks." << std::endl << std::endl;
+	fprintf(out, "Usage: %s [VALGRIND4HPC OPTIONS]... executable -- [EXECUTABLE OPTIONS]...\n", argv[0]);
+	fprintf(out, "Check for memory leaks and errors and aggregate results from multiple ranks.\n\n");
 
-	// parameters
-	auto printAligned = [&](std::string const& command, std::string const& description) {
-		out << std::left << std::setw(35) << command << description << std::endl;
-	};
-	printAligned("  -n, --num-ranks=<n>", "Run with <n> ranks [default: 1]");
-	printAligned("  -t, --tool=<tool>", "Run with specified valgrind tool: memcheck, helgrind, exp-sgcheck, drd. [default: memcheck]");
-	printAligned("  -l, --launcher-args=\"<args>\"", "Pass launcher specific arguments <args> to the application launcher, e.g. -l\"-N1.\"");
-	printAligned("  -i, --inputfile=<file>", "Provide input to all ranks from <file>.");
-	printAligned("  -o, --outputfile=<file>", "Log output messages to <file>.");
-	printAligned("  -s, --suppressions=<file>", "Suppress valgrind errors described in <file>. Can be used multiple times for each suppression file.");
-	printAligned("      --gen-suppressions=[yes|no]", "Generate suppressions for this job");
-	printAligned("      --gen-suppressions-file=<file>", "Write generated suppressions to this file");
-	printAligned("  -v, --valgrind-args=\"<args>\"", "Pass tool specific arguments <args> to valgrind.");
-	printAligned("  -r, --from-ranks=<ranks>", "Only debug / show output from certain ranks, e.g. -r\"0-2,4\" to exclude rank 3");
-	printAligned("  -g, --vgdb-error=<count>", "Start VGDB mode upon encountering this number of errors");
+	using FA = FrontendArgv;
+	fprintf(out, "  -%c, --%s  Run with <n> ranks [default: 1]\n",
+		FA::NumRanks.val, FA::NumRanks.name);
+	fprintf(out, "  -%c, --%s  Run with specified valgrind tool: memcheck, helgrind, exp-sgcheck, drd. [default: memcheck]\n",
+		FA::Tool.val, FA::Tool.name);
+	fprintf(out, "  -%c, --%s  Pass launcher specific arguments <args> to the application launcher, e.g. -l\"-N1.\"\n",
+		FA::LauncherArgs.val, FA::LauncherArgs.name);
+	fprintf(out, "  -%c, --%s  Provide input to all ranks from <file>.\n",
+		FA::Inputfile.val, FA::Inputfile.name);
+	fprintf(out, "  -%c, --%s  Log output messages to <file>.\n",
+		FA::Outputfile.val, FA::Outputfile.name);
+	fprintf(out, "  -%c, --%s  Suppress valgrind errors described in <file>. Can be used multiple times for each suppression file.\n",
+		FA::Suppressions.val, FA::Suppressions.name);
+	fprintf(out, "       --%s  Generate suppressions for this job [yes|no]\n",
+		FA::GenSuppressions.name);
+	fprintf(out, "       --%s  Write generated suppressions to this file\n",
+		FA::GenSuppressionsFile.name);
+	fprintf(out, "  -%c, --%s  Pass tool specific arguments <args> to valgrind.\n",
+		FA::ValgrindArgs.val, FA::ValgrindArgs.name);
+	fprintf(out, "  -%c, --%s  Only debug / show output from certain ranks, e.g. -r\"0-2,4\" to exclude rank 3\n",
+		FA::FromRanks.val, FA::FromRanks.name);
+	fprintf(out, "  -%c, --%s  Start VGDB mode upon encountering this number of errors\n",
+		FA::VgdbError.val, FA::VgdbError.name);
+	fprintf(out, "  -%c, --%s  Display this text and exit\n",
+		FA::Help.val, FA::Help.name);
 
-	// options
-	printAligned("  -h, --help", "Display this text and exit");
-
-	out << std::endl << "Example:  " << argv[0] << " -n32 --launcher-args=\"-N16 -j2\" --valgrind-args=\"--track-origins=yes --leak-check=full\" ./a.out -- arg1 arg2" << std::endl;
-	out << "Note that " << argv[0] << " arguments and target executable arguments are seperated by '--'" << std::endl;
+	fprintf(out, "\nExample:\n"
+		"  %s -n32 --launcher-args=\"-N16 -j2\" --valgrind-args=\"--track-origins=yes "
+		"--leak-check=full\" ./a.out -- arg1 arg2\n"
+		"Note that %s arguments and target executable arguments are seperated by '--'\n",
+		argv[0], argv[0]);
 
 	exit(code);
 }
@@ -368,12 +378,149 @@ handle_sigint(int sig)
 	std::thread{early_shutdown}.detach();
 }
 
+struct ParsedArgs
+{
+	std::string valgrind_tool;
+	std::string launcher_args;
+	std::string extra_valgrind_args;
+	std::string input_file_path;
+	std::string output_file_path;
+	std::string rank;
+	std::string from_ranks;
+	std::string with_mpi;
+	std::string with_cce;
+	std::string vgdb_error;
+	std::string gen_suppressions;
+	std::string gen_suppressions_file;
+	std::vector<std::string> suppression_files;
+	bool no_timeout_mode;
+	bool no_stacktrace_mode;
+	int rest_argc;
+	char** rest_argv;
+};
+
+static auto parse_argv(int argc, char** argv)
+{
+	auto result = ParsedArgs{};
+
+	using FA = FrontendArgv;
+	auto parsedArgv = IncomingArgv<FrontendArgv>{argc, argv};
+	while (true) {
+		auto&& [c, value] = parsedArgv.get_next();
+		if (c <= 0) { break; }
+
+		switch (c) {
+
+		case FA::NumRanks.val:
+			result.rank = std::move(value);
+			break;
+
+		case FA::Tool.val:
+			if ((value == "memcheck") || (value == "helgrind")
+			 || (value == "drd") || (value == "exp-sgcheck")) {
+				result.valgrind_tool = value;
+			} else {
+				bad_optarg(argv, FA::Tool.name, value.c_str());
+			}
+			break;
+
+		case FA::LauncherArgs.val:
+			result.launcher_args = std::move(value);
+			break;
+
+		case FA::Inputfile.val:
+			result.input_file_path = std::move(value);
+			break;
+
+		case FA::Outputfile.val:
+			result.output_file_path = std::move(value);
+			break;
+
+		case FA::Suppressions.val:
+			result.suppression_files.push_back(std::move(value));
+			break;
+
+		case FA::ValgrindArgs.val:
+			result.extra_valgrind_args = std::move(value);
+			break;
+
+		case FA::FromRanks.val:
+			result.from_ranks = std::move(value);
+			break;
+
+		case FA::VgdbError.val:
+			result.vgdb_error = std::move(value);
+
+		case FA::NoTimeout.val:
+			result.no_timeout_mode = true;
+			break;
+
+		case FA::NoStacktrace.val:
+			result.no_stacktrace_mode = true;
+			break;
+
+		case FA::CrayPmi.val:
+			if ((value == "yes") || (value == "no")) {
+				result.with_mpi = std::move(value);
+			} else {
+				bad_optarg(argv, FA::CrayPmi.name, value.c_str());
+			}
+			break;
+
+		case FA::WithCce.val:
+			if ((value == "yes") || (value == "no")) {
+				result.with_cce = std::move(value);
+			} else {
+				bad_optarg(argv, FA::WithCce.name, value.c_str());
+			}
+			break;
+
+		case FA::GenSuppressions.val:
+			if ((value == "yes") || (value == "no") || (value == "all")) {
+				result.gen_suppressions = std::move(value);
+			} else {
+				bad_optarg(argv, FA::GenSuppressions.name, optarg);
+			}
+			break;
+
+		case FA::GenSuppressionsFile.val:
+			result.gen_suppressions_file = std::move(value);
+			break;
+
+		case FA::Help.val:
+			usage(argv, 0);
+		default:
+			usage(argv, 1);
+		}
+	}
+
+	std::tie(result.rest_argc, result.rest_argv) = parsedArgv.get_rest();
+
+	// set variables based on optargs
+	if (result.rest_argv[0] == NULL)
+	{
+		fprintf(stderr, "%s: target executable argument required (none given)\n", argv[0]);
+		usage(argv, 1);
+	}
+
+	return result;
+}
+
 int
-main(int argc, char* const* argv)
+main(int argc, char** argv)
 {	
 	int ret = 0;
 	output_buf = std::cout.rdbuf();
-	auto suppressions_file_arg = std::string{};
+
+	// Parse arguments
+	auto args = parse_argv(argc, argv);
+	auto executable = std::string{args.rest_argv[0]};
+
+	// Open output file
+	if (!args.output_file_path.empty()) {
+		output_file.open(std::string(optarg));
+		output_buf = output_file.rdbuf();
+	}
 
 	try
 	{
@@ -526,13 +673,8 @@ main(int argc, char* const* argv)
 			throw std::runtime_error("Failed to set CTI_EXTRA_SLEEP: " + std::string{cti_error_str()});
 		}
 
-		std::string valgrind_tool;
-		std::string launcher_args;
-		std::string extra_valgrind_args;
-
 		// Add every default suppression file in the basePath/share/suppressions directory.
 		// Note that this path *MUST* match the $suppdir defined in the suppressions Makefile.am...
-		std::vector<std::string> suppression_files;
 		std::string suppPath = basePath + "/share/suppressions/";
 
 		// Check the environment override variable to disable default supressions
@@ -544,131 +686,12 @@ main(int argc, char* const* argv)
 			while ((dp = readdir(dirp)) != NULL) {
 				// Ignore files that start with '.'
 				if (dp->d_name[0] == '.')	continue;
-				suppression_files.push_back(suppPath + dp->d_name);
+				args.suppression_files.push_back(suppPath + dp->d_name);
 			}
 			closedir(dirp);
 		}
-		
-		std::string executable;
-		char* const* executable_argv = NULL;
-		int executable_argc = 0;
 
-		std::string input_file_path;
-		std::string rank_arg;
-		std::string from_ranks_arg;
-		std::string with_mpi_arg;
-		std::string with_cce_arg;
-		std::string vgdb_error_arg;
-		std::string gen_suppressions_arg;
-
-		struct option long_options[] = {
-			{"num-ranks", required_argument, NULL, 'n'},
-			{"tool", required_argument, NULL, 't'},
-			{"launcher-args", required_argument, NULL, 'l'},
-			{"inputfile", required_argument, NULL, 'i'},
-			{"outputfile", required_argument, NULL, 'o'},
-			{"suppressions", required_argument, NULL, 's'},
-			{"valgrind-args", required_argument, NULL, 'v'},
-			{"from-ranks", required_argument, NULL, 'r'},
-			{"vgdb-error", required_argument, NULL, 'g'},
-			{"no-timeout", no_argument, NULL, 1},
-			{"no-stacktraces", no_argument, NULL, 2},
-			{"cray-pmi", optional_argument, NULL, 3},
-			{"with-cce", optional_argument, NULL, 4},
-			{"gen-suppressions", required_argument, NULL, 5},
-			{"gen-suppressions-file", required_argument, NULL, 6},
-			{"help", no_argument, NULL, 'h'},
-			{NULL, 0, NULL, 0}
-		};
-
-		int ch; int option_index;
-		while ((ch = getopt_long(argc, argv, "n:t:l:o:s:v:r:\1\2\3::\4:\5:\6:h", long_options, &option_index)) != -1)
-		{
-			switch (ch)
-			{
-			case 'n': // num-ranks
-				rank_arg = std::string(optarg);
-				break;
-			case 't': // tool
-				if(!strcmp(optarg, "memcheck") || !strcmp(optarg, "helgrind") ||
-				   !strcmp(optarg, "drd") || !strcmp(optarg, "exp-sgcheck")) {
-					valgrind_tool = std::string(optarg);
-				} else {
-					bad_optarg(argv, long_options[option_index].name, optarg);
-				}
-				break;
-			case 'l': // launcher-args
-				launcher_args = std::string(optarg);
-				break;
-			case 'i': // inputfile
-				input_file_path = std::string(optarg);
-				break;
-			case 'o': // outputfile
-				output_file.open(std::string(optarg));
-				output_buf = output_file.rdbuf();
-				break;
-			case 's': // suppressions
-				suppression_files.push_back(std::string(optarg));
-				break;
-			case 'v': // valgrind-args
-				extra_valgrind_args = std::string(optarg);
-				break;
-			case 'r': // from-ranks
-				from_ranks_arg = std::string(optarg);
-				break;
-			case 'g': // vgdb-error
-				vgdb_error_arg = std::string(optarg);
-				break;
-			case 1: // no-timeout
-				no_timeout_mode = true;
-				break;
-			case 2: // no-stacktraces
-				no_stacktrace_mode = true;
-				break;
-			case 3: // cray-pmi
-				if(!strcmp(optarg, "yes") || !strcmp(optarg, "no")) {
-					with_mpi_arg = std::string(optarg);
-				} else {
-					bad_optarg(argv, long_options[option_index].name, optarg);
-				}
-				break;
-			case 4: // with-cce
-				if(!strcmp(optarg, "yes") || !strcmp(optarg, "no")) {
-					with_cce_arg = std::string(optarg);
-				} else {
-					bad_optarg(argv, long_options[option_index].name, optarg);
-				}
-				break;
-			case 5: // gen-suppressions
-				if(!strcmp(optarg, "yes") || !strcmp(optarg, "no") || !strcmp(optarg, "all")) {
-					gen_suppressions_arg = std::string{optarg};
-				} else {
-					bad_optarg(argv, long_options[option_index].name, optarg);
-				}
-				break;
-			case 6: // suppressions-file
-				suppressions_file_arg = std::string{optarg};
-				break;
-			case 'h':
-				usage(argv, 0);
-			case '?':
-				usage(argv, 1);
-			default:
-				usage(argv, 1);
-			}
-		}
-
-		// set variables based on optargs
-		if (argv[optind] == NULL)
-		{
-			fprintf(stderr, "%s: target executable argument required (none given)\n", argv[0]);
-			usage(argv, 1);
-		}
-		
-		executable = argv[optind];
-		executable_argv = argv + optind;
-		executable_argc = argc - optind;
-
+		// Check provided executable
 		if (executable.empty())
 		{
 			fprintf(stderr, "%s: target executable argument required (none given)\n", argv[0]);
@@ -684,7 +707,7 @@ main(int argc, char* const* argv)
 
 		if (!strcmp(cti_wlm_type_toString(cti_current_wlm()), "Cray ALPS"))
 		{ // FIXME: workaround a CTI issue where pmi_attribs is never created for non-MPI programs
-			if (with_mpi_arg.empty()) // but only on ALPS (SLURM / CS use proctable)
+			if (args.with_mpi.empty()) // but only on ALPS (SLURM / CS use proctable)
 			{
 				mpi_binary = is_parallel_binary(executable_path.c_str());
 				if (!mpi_binary && !quiet_mode) {
@@ -695,13 +718,13 @@ main(int argc, char* const* argv)
 				}
 			} else
 			{
-				mpi_binary = (with_mpi_arg.compare("yes") == 0) ? true : false;
+				mpi_binary = (args.with_mpi.compare("yes") == 0) ? true : false;
 			}
 		} else {
 			mpi_binary = true;
 		}
 
-		if (with_cce_arg.empty())
+		if (args.with_cce.empty())
 		{
 			bool dynamic_binary = is_dynamic_binary(executable_path.c_str());
 			if (!dynamic_binary && !quiet_mode) {
@@ -711,7 +734,7 @@ main(int argc, char* const* argv)
 				fprintf(stderr, "To override: pass the argument --with-cce=no. Press <enter> to continue debugging.\n");
 				getchar();
 			}
-		} else if (!with_cce_arg.compare("yes"))
+		} else if (!args.with_cce.compare("yes"))
 		{
 			bool dynamic_binary = is_dynamic_binary(executable_path.c_str());
 			if (!dynamic_binary) {
@@ -724,21 +747,21 @@ main(int argc, char* const* argv)
 
 		// Parse number of ranks
 		num_ranks = 1;
-		if (!rank_arg.empty()) {
+		if (!args.rank.empty()) {
 			try {
-				num_ranks = std::stoi(rank_arg);
+				num_ranks = std::stoi(args.rank);
 			} catch (...) {
-				throw std::invalid_argument(std::string("number of ranks as '") + rank_arg + "'");
+				throw std::invalid_argument(std::string("number of ranks as '") + args.rank + "'");
 			}
 		}
 
 		// Create active rank set
 		rank_set_t activeRankSet(num_ranks);
-		if (from_ranks_arg.empty()) {
+		if (args.from_ranks.empty()) {
 			activeRankSet.set();
 
 		} else {
-			std::stringstream ss(from_ranks_arg);
+			std::stringstream ss(args.from_ranks);
 			std::string rank;
 			while (std::getline(ss, rank, ',')) {
 				size_t from, to;
@@ -783,8 +806,8 @@ main(int argc, char* const* argv)
 		ManagedArgv launcher_argv;
 
 		launcher_argv.add("-n" + std::to_string(num_ranks));
-		if (!launcher_args.empty()) {
-			std::istringstream buf(launcher_args);
+		if (!args.launcher_args.empty()) {
+			std::istringstream buf(args.launcher_args);
 			std::istream_iterator<std::string> beg(buf), end;
 			for (auto it : std::vector<std::string>(beg, end)) {
 				launcher_argv.add(it);
@@ -797,38 +820,38 @@ main(int argc, char* const* argv)
 		if (cti_current_wlm() == CTI_WLM_PALS) {
 			starterArgv.add(StarterArgv::PalsBarrier);
 		}
-		starterArgv.add(StarterArgv::Binary, executable_argv[0]);
-		for (int i = 1; i < executable_argc; i++) {
-			starterArgv.add(StarterArgv::BinaryArg, executable_argv[i]);
+		starterArgv.add(StarterArgv::Binary, args.rest_argv[0]);
+		for (int i = 1; i < args.rest_argc; i++) {
+			starterArgv.add(StarterArgv::BinaryArg, args.rest_argv[i]);
 		}
 
 		// starter argv: optional valgrind arguments
-		if (valgrind_tool.empty()) { valgrind_tool = std::string("memcheck"); }
-		starterArgv.add(StarterArgv::ValgrindTool, valgrind_tool);
-		for (const auto& supp_path : suppression_files) {
+		if (args.valgrind_tool.empty()) { args.valgrind_tool = std::string("memcheck"); }
+		starterArgv.add(StarterArgv::ValgrindTool, args.valgrind_tool);
+		for (const auto& supp_path : args.suppression_files) {
 			CStrPtr basenameTarget(strdup(supp_path.c_str()), free);
 			starterArgv.add(StarterArgv::Suppressions, basename(basenameTarget.get()));
 		}
-		if (!extra_valgrind_args.empty()) {
-			std::istringstream ss(extra_valgrind_args);
+		if (!args.extra_valgrind_args.empty()) {
+			std::istringstream ss(args.extra_valgrind_args);
 			std::string arg;
 			while (std::getline(ss, arg, ' ')) {
 				starterArgv.add(StarterArgv::ValgrindArg, arg);
 			}
 		}
-		if (!vgdb_error_arg.empty()) {
-			starterArgv.add(StarterArgv::ValgrindArg, "--vgdb-error=" + vgdb_error_arg);
+		if (!args.vgdb_error.empty()) {
+			starterArgv.add(StarterArgv::ValgrindArg, "--vgdb-error=" + args.vgdb_error);
 		}
-		if (gen_suppressions_arg.empty() && !suppressions_file_arg.empty()) {
+		if (args.gen_suppressions.empty() && !args.gen_suppressions_file.empty()) {
 			// Default to enabled if generated suppressions file set
-			gen_suppressions_arg = "yes";
+			args.gen_suppressions = "yes";
 		}
 		// "yes" is interactive in Valgrind, set to "all"
-		if (gen_suppressions_arg == "yes") {
-			gen_suppressions_arg = "all";
+		if (args.gen_suppressions == "yes") {
+			args.gen_suppressions = "all";
 		}
-		if (!gen_suppressions_arg.empty()) {
-			starterArgv.add(StarterArgv::ValgrindArg, "--gen-suppressions=" + gen_suppressions_arg);
+		if (!args.gen_suppressions.empty()) {
+			starterArgv.add(StarterArgv::ValgrindArg, "--gen-suppressions=" + args.gen_suppressions);
 		}
 
 		// launcher_argv part 5: random seed
@@ -889,7 +912,7 @@ main(int argc, char* const* argv)
 
 		try {
 			appId = cti_launchApp(launcher_argv.get(), -1, -1,
-				input_file_path.empty() ? nullptr : input_file_path.c_str(),
+				args.input_file_path.empty() ? nullptr : args.input_file_path.c_str(),
 				nullptr, nullptr); // launch the valgrindized app
 			if (appId == 0) { throw std::runtime_error("cti_launchApp"); }
 		
@@ -900,15 +923,15 @@ main(int argc, char* const* argv)
 			if (mid == 0) { throw std::runtime_error("cti_createManifest"); }
 			
 			if (cti_addManifestBinary(mid, "valgrind")) { throw std::runtime_error("valgrind binary"); } // add valgrind binary
-			if (!valgrind_tool.compare("helgrind")) {
+			if (!args.valgrind_tool.compare("helgrind")) {
 				for (auto& lib : helgrind_libs) {
 					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
 				}
-			} else if (!valgrind_tool.compare("drd")) {
+			} else if (!args.valgrind_tool.compare("drd")) {
 				for (auto& lib : drd_libs) {
 					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
 				}
-			} else if (!valgrind_tool.compare("exp-sgcheck")) {
+			} else if (!args.valgrind_tool.compare("exp-sgcheck")) {
 				for (auto& lib : sgcheck_libs) {
 					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
 				}
@@ -925,7 +948,7 @@ main(int argc, char* const* argv)
 			}
 
 			// Add VGDB binary if VGDB mode enabled
-			if (!vgdb_error_arg.empty()) {
+			if (!args.vgdb_error.empty()) {
 				if (cti_addManifestBinary(mid, "vgdb")) {
 					throw std::runtime_error("failed to find vgdb binary");
 				}
@@ -936,7 +959,7 @@ main(int argc, char* const* argv)
 			if (cti_addManifestLibrary(mid, filterPath.c_str())) { throw std::runtime_error("MRNet filters"); }
 
 			//Custom and default suppression
-			for (auto& it : suppression_files)
+			for (auto& it : args.suppression_files)
 			{
 				if (cti_addManifestFile(mid, it.c_str())) { throw std::runtime_error(it); }
 			}
@@ -1099,10 +1122,10 @@ main(int argc, char* const* argv)
 		try {
 
 			// Write to provided suppressions file
-			if (!suppressions_file_arg.empty()) {
+			if (!args.gen_suppressions_file.empty()) {
 				auto suppressionsStream = std::ofstream{};
 				suppressionsStream.exceptions(std::ofstream::badbit | std::ofstream::failbit);
-				suppressionsStream.open(suppressions_file_arg);
+				suppressionsStream.open(args.gen_suppressions_file);
 
 				for (auto it : *masterSuppressionAgg) {
 					suppressionsStream << it.first << std::endl;
@@ -1110,14 +1133,14 @@ main(int argc, char* const* argv)
 			}
 
 		} catch (std::exception const& ex) {
-			output_stream << "Failed to open " << suppressions_file_arg << " for writing: "
+			output_stream << "Failed to open " << args.gen_suppressions_file << " for writing: "
 				<< "(" << ex.what() << ")\n"
 				<< "Generated suppressions will be written to this output.\n" << std::endl;
-			suppressions_file_arg = {};
+			args.gen_suppressions_file = {};
 		}
 
 		// If no file was set, output to stderr
-		if (suppressions_file_arg.empty()) {
+		if (args.gen_suppressions_file.empty()) {
 			output_stream << "GENERATED SUPPRESSIONS:\n";
 
 			for (auto it : *masterSuppressionAgg) {

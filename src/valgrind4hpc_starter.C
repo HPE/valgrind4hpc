@@ -78,7 +78,7 @@ static void run_pals_barrier()
 }
 
 int
-main(int argc, char* const* argv)
+main(int argc, char** argv)
 {
 	// parse the starter arguments
 	bool palsBarrier = false;

@@ -493,7 +493,7 @@ static void log_terminate()
 }
 
 int
-main(int argc, char* const* argv)
+main(int argc, char** argv)
 {
 	std::set_terminate(log_terminate);
 
@@ -545,9 +545,9 @@ main(int argc, char* const* argv)
 		{ std::vector<char*> mrnetwork_argv;
 			// create the argv array
 			mrnetwork_argv.push_back(strdup(argv[0]));
-			{ char* const* arg = parsedArgv.get_rest();
-				while (*arg != nullptr) {
-					mrnetwork_argv.push_back(strdup(*(arg++)));
+			{ auto&& [rest_argc, rest_argv] = parsedArgv.get_rest();
+				while (*rest_argv != nullptr) {
+					mrnetwork_argv.push_back(strdup(*(rest_argv++)));
 				}
 			}
 

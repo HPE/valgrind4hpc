@@ -77,7 +77,7 @@ public:
 		argv.add(binary);
 	}
 
-	char* const *get() { return argv.get(); }
+	char* const* get() { return argv.get(); }
 
 	void add(Argv::Option const& opt) {
 		if (opt.name == nullptr) {
@@ -105,10 +105,10 @@ template <class ArgvDef>
 class IncomingArgv : public ArgvDef {
 	std::string flagSpec;
 	const int argc;
-	char* const* argv;
+	char** argv;
 
 public:
-	IncomingArgv(int argc_, char* const* argv_) : argc(argc_), argv(argv_) {
+	IncomingArgv(int argc_, char** argv_) : argc(argc_), argv(argv_) {
 		for (const Argv::GNUOption* opt_ptr = ArgvDef::long_options;
 			opt_ptr->val != 0; opt_ptr++) {
 
@@ -129,8 +129,8 @@ public:
 		return std::make_pair(c, optarg);
 	}
 
-	char* const* get_rest() {
-		return argv + optind;
+	auto get_rest() {
+		return std::make_pair(argc - optind, argv + optind);
 	}
 };
 

@@ -19,6 +19,33 @@
 using Option    = Argv::Option;
 using Parameter = Argv::Parameter;
 
+struct FrontendArgv : public Argv {
+	static constexpr Option NoTimeout { "no-timeout", '\1' };
+	static constexpr Option NoStacktrace { "no-stacktrace", '\2' };
+	static constexpr Option Help { "help", 'h' };
+
+	static constexpr Parameter NumRanks { "num-ranks", 'n' };
+	static constexpr Parameter Tool { "tool", 't' };
+	static constexpr Parameter LauncherArgs { "launcher-args", 'l' };
+	static constexpr Parameter Inputfile { "inputfile", 'i' };
+	static constexpr Parameter Outputfile { "outputfile", 'o' };
+	static constexpr Parameter Suppressions { "suppressions", 's' };
+	static constexpr Parameter ValgrindArgs { "valgrind-args", 'v' };
+	static constexpr Parameter FromRanks { "from-ranks", 'r' };
+	static constexpr Parameter VgdbError { "vgdb-error", 'g' };
+	static constexpr Parameter CrayPmi { "cray-pmi", '\3' };
+	static constexpr Parameter WithCce { "with-cce", '\4' };
+	static constexpr Parameter GenSuppressions { "gen-suppressions", '\5' };
+	static constexpr Parameter GenSuppressionsFile { "gen-suppressions-fil", '\6' };
+
+	static constexpr GNUOption long_options[] = {
+		NoTimeout, NoStacktrace, Help,
+		NumRanks, Tool, LauncherArgs, Inputfile, Outputfile, Suppressions,
+		ValgrindArgs, FromRanks, VgdbError, CrayPmi, WithCce, GenSuppressions,
+		GenSuppressionsFile,
+	long_options_done };
+};
+
 struct BackendArgv : public Argv {
 	static constexpr Option BinaryUsesMPI { "uses-mpi", 'm' };
 	static constexpr Option NoTimeout     { "no-timeout", 't' };
@@ -32,12 +59,6 @@ struct BackendArgv : public Argv {
 		ActiveRankSet, QueueKey,
 	long_options_done };
 };
-
-// flaw in C++11 relating to static constexpr. can be removed in C++17
-using BA = BackendArgv;
-constexpr Option    BA::BinaryUsesMPI, BA::NoTimeout, BA::NoStacktraces;
-constexpr Parameter BA::ActiveRankSet, BA::QueueKey;
-constexpr Argv::GNUOption BA::long_options[];
 
 struct StarterArgv : Argv {
 	static constexpr Option PalsBarrier { "pals-barrier", 'p' };
@@ -54,12 +75,6 @@ struct StarterArgv : Argv {
 		Binary, BinaryArg, ValgrindTool, ValgrindArg, Suppressions, QueueKey,
 	long_options_done };
 };
-
-// flaw in C++11 relating to static constexpr. can be removed in C++17
-using SA = StarterArgv;
-constexpr Parameter SA::Binary, SA::BinaryArg, SA::ValgrindTool,
-	SA::ValgrindArg, SA::Suppressions, SA::QueueKey;
-constexpr Argv::GNUOption SA::long_options[];
 
 struct ValgrindArgv : Argv {
 	static constexpr Option TraceChildren          { "trace-children=yes", 1 };
@@ -79,12 +94,5 @@ struct ValgrindArgv : Argv {
 		Tool, XMLSocket, Suppressions,
 	long_options_done };
 };
-
-// flaw in C++11 relating to static constexpr. can be removed in C++17
-using VA = ValgrindArgv;
-constexpr Option    VA::TraceChildren, VA::XMLMode,
-	VA::SilenceChildAfterFork, VA::SonameTcmallocSynonyms;
-constexpr Parameter VA::Tool, VA::XMLSocket, VA::Suppressions;
-constexpr Argv::GNUOption VA::long_options[];
 
 #endif
