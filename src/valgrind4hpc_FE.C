@@ -1062,10 +1062,14 @@ main(int argc, char** argv)
 		num_daemons = cti_getNumAppNodes(appId);
 
 		// Wait for finish to become true and check for block timeouts
-		std::unique_lock<std::mutex> lck(finish_mtx);
 		std::ostream output_stream(output_buf);
-		while(!finish){
+		auto lastAppCheck = std::chrono::system_clock::now();
+		while (!finish) {
+			std::unique_lock<std::mutex> lck(finish_mtx);
 			finish_cv.wait_for(lck, std::chrono::duration<double>(0.5));
+			if (finish) {
+				break;
+			}
 
 			{ std::lock_guard<std::mutex> mtx_lck(mtx);
 				while(const auto& evicted = masterErrorAgg->evict()) {
@@ -1076,7 +1080,20 @@ main(int argc, char** argv)
 				}
 				// all Summary blocks are output after completion of the run, instead of during
 			}
+
+			// Run application status check
+			if (std::chrono::system_clock::now() - lastAppCheck >= std::chrono::seconds{5}) {
+
+				// Application exited early
+				if (!cti_appIsValid(appId)) {
+					fprintf(stderr, "Valgrind4hpc detected early job exit, cleaning up...\n");
+					break;
+				}
+
+				lastAppCheck = std::chrono::system_clock::now();
+			}
 		}
+
 	} catch (std::exception& e) {
 		std::cerr << argv[0] << ": front end caught exception '" << e.what() << "'" << std::endl;
 
@@ -1111,9 +1128,12 @@ main(int argc, char** argv)
 			print_msg(it, output_stream);
 		}
 	}
-	
-	output_stream << "ERROR SUMMARY: "<< unique_errors << " errors from " << total_errors << " contexts";
-	output_stream << " (suppressed " << total_suppressions << ")\n\n";
+
+	// If application exited early and there were no errors, don't print summaries
+	if (finish || (total_errors > 0)) {
+		output_stream << "ERROR SUMMARY: "<< unique_errors << " errors from " << total_errors << " contexts";
+		output_stream << " (suppressed " << total_suppressions << ")\n\n";
+	}
 
 	// Output generated suppressions
 
