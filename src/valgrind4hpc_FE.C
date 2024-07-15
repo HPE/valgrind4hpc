@@ -306,7 +306,7 @@ usage(char* const* argv, int code) {
 	using FA = FrontendArgv;
 	fprintf(out, "  -%c, --%s  Run with <n> ranks [default: 1]\n",
 		FA::NumRanks.val, FA::NumRanks.name);
-	fprintf(out, "  -%c, --%s  Run with specified valgrind tool: memcheck, helgrind, exp-sgcheck, drd. [default: memcheck]\n",
+	fprintf(out, "  -%c, --%s  Run with specified valgrind tool: memcheck, helgrind, drd. [default: memcheck]\n",
 		FA::Tool.val, FA::Tool.name);
 	fprintf(out, "  -%c, --%s  Pass launcher specific arguments <args> to the application launcher, e.g. -l\"-N1.\"\n",
 		FA::LauncherArgs.val, FA::LauncherArgs.name);
@@ -417,7 +417,7 @@ static auto parse_argv(int argc, char** argv)
 
 		case FA::Tool.val:
 			if ((value == "memcheck") || (value == "helgrind")
-			 || (value == "drd") || (value == "exp-sgcheck")) {
+			 || (value == "drd")) {
 				result.valgrind_tool = value;
 			} else {
 				bad_optarg(argv, FA::Tool.name, value.c_str());
@@ -605,10 +605,6 @@ main(int argc, char** argv)
 		                                "vgpreload_drd-" ARCH "-linux.so",
 		                                "vgpreload_core-" ARCH "-linux.so",
 		                                "default.supp"};
-		const std::string sgcheck_libs[] = {"exp-sgcheck-" ARCH "-linux",
-		                                    "vgpreload_exp-sgcheck-" ARCH "-linux.so",
-		                                    "vgpreload_core-" ARCH "-linux.so",
-		                                    "default.supp"};
 		#undef ARCH
 		for (auto lib : memcheck_libs) {
 			if (access((valgrind_lib_base + lib).c_str(), R_OK) != 0) {
@@ -929,10 +925,6 @@ main(int argc, char** argv)
 				}
 			} else if (!args.valgrind_tool.compare("drd")) {
 				for (auto& lib : drd_libs) {
-					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
-				}
-			} else if (!args.valgrind_tool.compare("exp-sgcheck")) {
-				for (auto& lib : sgcheck_libs) {
 					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
 				}
 			} else {

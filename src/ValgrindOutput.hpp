@@ -77,7 +77,7 @@ public:
 	} outputStage = Stage::Preamble;
 
 	enum class Protocol {
-		Undefined, Memcheck, Helgrind, Drd, ExpSgcheck
+		Undefined, Memcheck, Helgrind, Drd
 	} protocol = Protocol::Undefined;
 
 	const enum UseStacktraces {

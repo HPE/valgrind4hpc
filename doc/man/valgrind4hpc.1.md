@@ -36,7 +36,7 @@ can be debugged with Valgrind, it can be debugged with Valgrind4hpc.
 Run with this number of ranks (default 1)
 
 **-t**, **\--tool**=*TOOL*  
-Run memcheck, helgrind, exp-sgcheck, or drd with this tool on the
+Run memcheck, helgrind, or drd with this tool on the
 backend (default is memcheck)
 
 **-l**, **\--launcher-args**=*\"arguments\"*  

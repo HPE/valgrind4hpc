@@ -169,8 +169,6 @@ void ValgrindOutput::readPreamble(const Ptree& pt) {
 				protocol = Protocol::Helgrind;
 			} else if (toolName.compare("drd") == 0) {
 				protocol = Protocol::Drd;
-			} else if (toolName.compare("exp-sgcheck") == 0) {
-				protocol = Protocol::ExpSgcheck;
 			} else {
 				throw std::runtime_error(("received an invalid protocol from pid " + std::to_string(pid) + ": " + toolName).c_str());
 			}
