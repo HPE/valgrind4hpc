@@ -12,18 +12,12 @@
 # Stop immediately if anything unexpected happens
 set -ex
 
-echo -e "\nCreating output directory structure..."
-
-OUTPUT_DIR="cpedocs_valgrind4hpc"
+OUTPUT_DIR="valgrind4hpc"
 mkdir -p "$OUTPUT_DIR/man"
-echo "  mkdir $OUTPUT_DIR/man"
 mkdir -p "$OUTPUT_DIR/guides"
-echo "  mkdir $OUTPUT_DIR/guides"
-
-echo -e "\nCollecting files..."
 
 # Collect index
-cp ./cpedocs_index_chunk.md "$OUTPUT_DIR"
+cp ./index.md "$OUTPUT_DIR"
 
 # Collect man page
 cp ../man/valgrind4hpc.1.md "$OUTPUT_DIR/man/"
@@ -41,6 +35,8 @@ confirm_and_replace() {
 }
 
 confirm_and_replace "# NAME" "# valgrind4hpc Man Page" "$OUTPUT_DIR/man/valgrind4hpc.1.md"
+
+set +x
 
 echo -e "\nDone. Output directory is $OUTPUT_DIR."
 echo -e "Now copy $OUTPUT_DIR to /CPEDocs/doc/debugging-tools."
