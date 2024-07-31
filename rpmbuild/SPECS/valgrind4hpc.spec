@@ -232,6 +232,7 @@ Functional tests for valgrind4hpc
 %{__cp} -a %{external_build_dir}/share/suppressions/libmpich_cray.supp ${RPM_BUILD_ROOT}/%{prefix}/%{cray_product}/%{pkgversion}/share/suppressions
 %{__cp} -a %{external_build_dir}/share/suppressions/libpmi.supp ${RPM_BUILD_ROOT}/%{prefix}/%{cray_product}/%{pkgversion}/share/suppressions
 %{__cp} -a %{external_build_dir}/share/suppressions/misc.supp ${RPM_BUILD_ROOT}/%{prefix}/%{cray_product}/%{pkgversion}/share/suppressions
+%{__cp} -a %{external_build_dir}/share/suppressions/libcxi.supp ${RPM_BUILD_ROOT}/%{prefix}/%{cray_product}/%{pkgversion}/share/suppressions
 
 # modulefile
 %{__install} -d ${RPM_BUILD_ROOT}/%{prefix}/modulefiles/%{modulefile_name}

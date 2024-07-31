@@ -27,4 +27,4 @@ BUILT_SOURCES = libmpich_cray.supp libpmi.supp libfabric.supp misc.supp
 
 CLEANFILES = $(BUILT_SOURCES) supp_generator
 suppdir = $(datadir)/suppressions
-supp_DATA = $(BUILT_SOURCES) fixed_supp/known.supp
+supp_DATA = $(BUILT_SOURCES) fixed_supp/known.supp fixed_supp/libcxi.supp

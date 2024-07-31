@@ -1,0 +1,117 @@
+{
+   libcxi send/recieve
+   Memcheck:Cond
+   ...
+   fun:_cxi_*
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Value8
+   ...
+   fun:_cxi_*
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Cond
+   ...
+   fun:_cxip_*
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Value8
+   ...
+   fun:_cxip_*
+   ...
+}
+
+{
+   libcxi send/recieve
+   Memcheck:Cond
+   ...
+   fun:PMPI_Init
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   write(buf)
+   ...
+   fun:PMPI_Init
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   writev(vector[1])
+   ...
+   fun:PMPI_Init
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   mmap(offset)
+   ...
+   fun:PMPI_Init
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   mmap(length)
+   ...
+   fun:PMPI_Init
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   write(buf)
+   ...
+   fun:MPID_Init
+   ...
+}
+
+{
+   libcxi send/recieve
+   Memcheck:Param
+   write(buf)
+   ...
+   fun:PMPI_Finalize
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   muap(length)
+   ...
+   fun:PMPI_Finalize
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   munmap(length)
+   ...
+   fun:PMPI_Finalize
+   ...
+}
+{
+   libcxi send/recieve
+   Memcheck:Param
+   mmap(offset)
+   ...
+   fun:PMPI_Finalize
+   ...
+}
+
+{
+   libcxi send/recieve
+   Memcheck:Cond
+   ...
+   fun:MPIDI_OFI_mpi_finalize_hook
+   ...
+}
