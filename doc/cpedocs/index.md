@@ -11,10 +11,5 @@ Valgrind4hpc is a Valgrind-based debugging tool to aid in the detection of memor
 leaks and errors in parallel applications. Valgrind4hpc aggregates any duplicate
 messages across ranks to help provide an understandable picture of program behavior.
 
-### Guides
-
-[User Guide](./guides/user_guide.md)
-
-### man pages
-
-[valgrind4hpc](./man/valgrind4hpc.1.md)
+- [User Guide](./guides/user_guide.md)
+- [valgrind4hpc man page](./man/valgrind4hpc.1.md)

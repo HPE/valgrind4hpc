@@ -9,8 +9,48 @@ results of each valgrind instance and merges them into a single report.
 
 ## A Quick Example
 
-Let's check a multi-rank MPI app for memory leaks. One basic way to do this, without
-valgrind4hpc, is to simply launch the job with a job launcher, but under the control of
+### Source Code
+
+Our example is this trivial MPI app:
+
+```c
+#include <mpi.h>
+#include <stdlib.h>
+
+int main(int argc, char **argv) {
+  MPI_Init(&argc, &argv);
+
+  int my_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
+
+  // allocate...
+  int *vec = (int *)malloc(sizeof(int) * 512);
+
+  // ...oops, forgot to free it on rank 1
+  if (my_rank != 1) {
+    free(vec);
+  }
+
+  MPI_Finalize();
+  return 0;
+}
+```
+
+Build it using the Cray CCE compiler:
+
+```
+$ module load cce
+$ cc -O0 ./mpi_mem_leak.c -o ./mpi_mem_leak
+```
+
+Make sure to use `-O0` to disable compiler optimizations. Otherwise the
+compiler would notice that we never use the memory we allocate and optimize it
+away completely.
+
+### Detecting The Leak
+
+Let's check our app for memory leaks. One basic way to do this without
+valgrind4hpc is to simply launch the job with a job launcher under the control of
 valgrind.
 
 ```
@@ -361,3 +401,4 @@ a{1}: #11 0x0000000006ceffbf in MPID_Finalize
 a{1}: #12 0x000000000537778e in PMPI_Finalize
 a{1}: #13 0x0000000000201c97 in main at mpi_mem_leak.c:63
 ```
+
