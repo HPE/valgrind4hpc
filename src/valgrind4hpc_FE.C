@@ -534,7 +534,7 @@ main(int argc, char** argv)
 		int sum_filter_id;
 
 		std::string valgrind_bin_path;
-		std::string install_lib_valgrind;
+		std::string install_libexec_valgrind;
 
 		// get/set environment variables
 		char *benv;
@@ -548,41 +548,29 @@ main(int argc, char** argv)
 			std::string user_valgrind_install_path = std::string(vld);
 			printf("Using Valgrind: %s\n",user_valgrind_install_path.c_str());
 			valgrind_bin_path = user_valgrind_install_path + "/bin";
-			install_lib_valgrind = user_valgrind_install_path + "/lib/valgrind";
-		}
-		else{
+			install_libexec_valgrind = user_valgrind_install_path + "/libexec/valgrind/";
+
+		} else{
 			// check for valgrind binary included with install
 			std::string tmp = basePath + "/bin/valgrind";
 			struct stat st;
 			if (stat(tmp.c_str(), &st) == 0) {
 				// use packaged valgrind
 				valgrind_bin_path = tmp;
+				install_libexec_valgrind = basePath + "/libexec/valgrind/";
 				// Do not inform user of this
-			}
-			else {
+			} else {
 				valgrind_bin_path = get_bin_path("valgrind");
 				if (valgrind_bin_path.empty()) {
 					printf("Can't find valgrind in PATH. Check with `which valgrind`.");
 					exit(1);
 				}
+
+				CStrPtr vlb(strdup(valgrind_bin_path.c_str()), free);
+				install_libexec_valgrind = std::string(dirname(vlb.get())) + "/../libexec/valgrind/";
+
 				std::cout << "Using Valgrind: " << valgrind_bin_path << std::endl;
 			}
-		}
-
-		std::string valgrind_lib_base;
-		{ CStrPtr vlb(strdup(valgrind_bin_path.c_str()), free);
-			valgrind_lib_base = std::string(dirname(vlb.get())); // FIXME: this can be changed when building valgrind from source
-		}
-
-		struct stat st;
-		if (stat((valgrind_lib_base + "/../libexec/valgrind/").c_str(), &st) == 0) {
-			valgrind_lib_base += "/../libexec/valgrind/";
-		} else { // if it's not actually here, it will error during the library check and print a message
-			valgrind_lib_base += "/../lib/valgrind/";
-		}
-		if (!install_lib_valgrind.empty()) {
-			// reenable for non-internal release fprintf(stderr, "VALGRIND_LIB set; using custom directory for core files: %s\n", install_lib_valgrind);
-			valgrind_lib_base = install_lib_valgrind + "/";
 		}
 
 		/* set architecture-specific valgrind filenames */
@@ -607,8 +595,9 @@ main(int argc, char** argv)
 		                                "default.supp"};
 		#undef ARCH
 		for (auto lib : memcheck_libs) {
-			if (access((valgrind_lib_base + lib).c_str(), R_OK) != 0) {
-				throw std::runtime_error("can't find valgrind core: " + lib + ". Check with `valgrind -d | grep " + lib + "`, optionally set VALGRIND_LIB path");
+			if (access((install_libexec_valgrind + lib).c_str(), R_OK) != 0) {
+				throw std::runtime_error("can't find valgrind core: " + install_libexec_valgrind + lib
+					+ ". Check with `valgrind -d | grep " + lib + "`, optionally set VALGRIND_LIB path");
 			}
 		}
 
@@ -921,16 +910,16 @@ main(int argc, char** argv)
 			if (cti_addManifestBinary(mid, "valgrind")) { throw std::runtime_error("valgrind binary"); } // add valgrind binary
 			if (!args.valgrind_tool.compare("helgrind")) {
 				for (auto& lib : helgrind_libs) {
-					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
+					if (cti_addManifestLibrary(mid, (install_libexec_valgrind + lib).c_str())) { throw std::runtime_error(lib); }
 				}
 			} else if (!args.valgrind_tool.compare("drd")) {
 				for (auto& lib : drd_libs) {
-					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
+					if (cti_addManifestLibrary(mid, (install_libexec_valgrind + lib).c_str())) { throw std::runtime_error(lib); }
 				}
 			} else {
 				// add default memcheck wrappers
 				for (auto& lib : memcheck_libs) {
-					if (cti_addManifestLibrary(mid, (valgrind_lib_base + lib).c_str())) { throw std::runtime_error(lib); }
+					if (cti_addManifestLibrary(mid, (install_libexec_valgrind + lib).c_str())) { throw std::runtime_error(lib); }
 				}
 
 				// add dmapp-specific wrapper if present
