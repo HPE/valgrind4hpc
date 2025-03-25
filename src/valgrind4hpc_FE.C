@@ -518,8 +518,12 @@ main(int argc, char** argv)
 
 	// Open output file
 	if (!args.output_file_path.empty()) {
-		output_file.open(std::string(optarg));
-		output_buf = output_file.rdbuf();
+		output_file.open(args.output_file_path);
+		if (output_file.is_open()) {
+			output_buf = output_file.rdbuf();
+		} else {
+			throw std::runtime_error("Could not open output file path " + args.output_file_path);
+		}
 	}
 
 	try
