@@ -387,7 +387,7 @@ else
 fi
 
 # Generate a list of dynamic shared objects (libraries) to add to Cray PE cache
-echo "%{cray_prefix}/%{cray_product}/%{pkgversion}/libvalgrind4hpc_filters.so" > ${RPM_INSTALL_PREFIX}/%{cray_product}/%{pkgversion}/%{cray_dso_list}
+echo "%{cray_prefix}/%{cray_product}/%{pkgversion}/lib/libvalgrind4hpc_filters.so" > ${RPM_INSTALL_PREFIX}/%{cray_product}/%{pkgversion}/%{cray_dso_list}
 
 # run ldconfig for good measure
 if [ -w /etc/ld.so.cache ]
