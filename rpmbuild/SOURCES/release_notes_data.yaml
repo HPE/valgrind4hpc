@@ -42,7 +42,6 @@ notes:
 product_dependencies:
  - cray-mrnet <mrnet_version_range> installed
  - cray-cti <cti_version_range> installed
- - cdst-support <cdst_version_range> installed
 os_dependencies:
  - HPE CSM systems with SLES 15 SP5 - SP6
  - HPE HPCM systems with SLES 15 SP5 - SP6 or RHEL 8.10 - 9.4

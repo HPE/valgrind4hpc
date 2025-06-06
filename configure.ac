@@ -86,11 +86,10 @@ CXXFLAGS="$CXXFLAGS $BOOST_CPPFLAGS"
 dnl Check for CTI
 PKG_CHECK_MODULES([CRAY_CTI_FE],[common_tools_fe],[],[AC_MSG_ERROR([libcommontools_fe.so not found.])])
 PKG_CHECK_MODULES([CRAY_CTI_BE],[common_tools_be],[],[AC_MSG_ERROR([libcommontools_be.so not found.])])
-PKG_CHECK_MODULES([CDST_SUP], [cray-cdst-support])
 dnl Add cdst support flags
-LDFLAGS="$LDFLAGS $CDST_SUP_LIBS"
-CFLAGS="$CFLAGS $CDST_SUP_CFLAGS"
-CXXFLAGS="$CXXFLAGS $CDST_SUP_CFLAGS"
+#LDFLAGS="$LDFLAGS $CDST_SUP_LIBS"
+#CFLAGS="$CFLAGS $CDST_SUP_CFLAGS"
+#CXXFLAGS="$CXXFLAGS $CDST_SUP_CFLAGS"
 
 dnl Check for MRNet
 PKG_CHECK_MODULES([CRAY_MRNET], [cray-mrnet])

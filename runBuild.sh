@@ -11,6 +11,13 @@
 # in any form.
 #
 
+nodeps=
+for arg in "$@"; do
+    if [ $arg == "--nodeps" ]; then
+	nodeps=1
+    fi
+done
+
 echo "############################################"
 echo "#            Setup environment.            #"
 echo "############################################"
@@ -21,10 +28,10 @@ source ./external/cdst_build_library/build_lib_gcc
 
 setup_modules
 
-module load cray-cdst-support
+module load cray-cti-devel
 check_exit_status
 
-module load cray-cti-devel
+module load cray-dyninst
 check_exit_status
 
 module load cray-mrnet
@@ -54,40 +61,43 @@ fi
 mkdir -p $install_dir
 check_exit_status
 
-echo "############################################"
-echo "#            Building valgrind             #"
-echo "############################################"
+if [ -z "$nodeps" ]; then
+    echo "############################################"
+    echo "#            Building valgrind             #"
+    echo "############################################"
 
-# ensure submodule is checked out
-if [[ ! -f $top_level/external/valgrind/README ]]; then
-    echo "valgrind submodule not checked out..."
-    exit 1
+    # ensure submodule is checked out
+    if [[ ! -f $top_level/external/valgrind/README ]]; then
+	echo "valgrind submodule not checked out..."
+	exit 1
+    fi
+
+    cd $top_level/external/valgrind
+    check_exit_status
+
+    ./autogen.sh
+    check_exit_status
+
+    PERL="/usr/bin/perl" ./configure --prefix=$install_dir
+    check_exit_status
+
+    make $cdst_j_flags
+    check_exit_status
+
+    # build manpages
+    cd $top_level/external/valgrind/docs
+    check_exit_status
+
+    make $cdst_j_flags man-pages
+    check_exit_status
+
+    cd $top_level/external/valgrind
+    check_exit_status
+
+    make $cdst_j_flags install
+    check_exit_status
 fi
 
-cd $top_level/external/valgrind
-check_exit_status
-
-./autogen.sh
-check_exit_status
-
-PERL="/usr/bin/perl" ./configure --prefix=$install_dir
-check_exit_status
-
-make $cdst_j_flags
-check_exit_status
-
-# build manpages
-cd $top_level/external/valgrind/docs
-check_exit_status
-
-make $cdst_j_flags man-pages
-check_exit_status
-
-cd $top_level/external/valgrind
-check_exit_status
-
-make $cdst_j_flags install
-check_exit_status
 
 echo "############################################"
 echo "#          Building valgrind4hpc           #"
@@ -99,7 +109,7 @@ check_exit_status
 autoreconf -ifv
 check_exit_status
 
-./configure --prefix=$install_dir --with-boost=$CRAY_CDST_SUPPORT_INSTALL_DIR --with-boost-libdir=$CRAY_CDST_SUPPORT_INSTALL_DIR/lib
+./configure --prefix=$install_dir --with-boost=$CRAY_DYNINST_INSTALL_DIR
 check_exit_status
 
 make $cdst_j_flags
