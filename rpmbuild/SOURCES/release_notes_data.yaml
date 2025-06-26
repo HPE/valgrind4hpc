@@ -37,6 +37,10 @@ product_description: |
    program behavior. Valgrind4hpc manages starting and redirecting output from many
    copies of Valgrind, as well as deduplicating and filtering Valgrind messages.
    If your program can be debugged with Valgrind, it can be debugged with Valgrind4hpc.
+ - SUSTAINING RELEASE NOTICE: Following the CPE 25.09 release, Valgrind4hpc
+   will no longer be receiving feature updates. Valgrind4hpc will still be
+   released as part of CPE, but may be removed in a future release.
+
 known_issues:
 notes:
 product_dependencies:
