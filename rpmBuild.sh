@@ -2,6 +2,6 @@
 set -xe
 echo Entering $0
 
-./runBuild.sh
+./hpe/runBuild.sh
 
 echo Exiting $0

@@ -1,3 +1,4 @@
+build/
 aclocal.m4
 autom4te.cache
 config/
@@ -53,3 +54,9 @@ workspaces
 environment_variables.txt
 *.log
 
+/subprojects/.wraplock
+/subprojects/mrnet
+
+doc/cpedocs/valgrind4hpc/
+
+/.vscode

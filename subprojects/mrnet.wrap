@@ -1,0 +1,13 @@
+[wrap-git]
+directory = mrnet
+url = https://github.com/dyninst/mrnet.git
+revision = 7375ba5bb0df87c68e58ad15e9e5e351ae020c08
+depth = 1
+# cray-mrnet builds with autotools upstream and has no native meson.build, so
+# overlay one from subprojects/packagefiles/cray-mrnet on top of the checkout.
+patch_directory = mrnet
+diff_files = mrnet/hpe.patch
+
+[provide]
+dependency_names = mrnet
+

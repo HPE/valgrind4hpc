@@ -11,7 +11,10 @@
 # in any form.
 #
 
-source ./external/cdst_build_library/build_lib
+# directory of this script
+hpe="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+source "$hpe/external/cdst_build_library/build_lib"
+
 
 echo "############################################"
 echo "#             Installing deps              #"
@@ -43,6 +46,8 @@ if [[ "$target_pm" == "$cdst_pm_zypper" ]]; then
         make-lang \
         makeinfo \
         mksh \
+        meson \
+        libboost_headers1_66_0-devel \
         ncurses \
         ncurses-devel \
         rpm-build \
@@ -50,6 +55,7 @@ if [[ "$target_pm" == "$cdst_pm_zypper" ]]; then
         xsltproc \
         xz-devel \
         python3-pip \
+        python311 \
         zlib-devel
     check_exit_status
 elif [[ "$target_pm" == "$cdst_pm_yum" ]]; then
@@ -64,6 +70,7 @@ elif [[ "$target_pm" == "$cdst_pm_yum" ]]; then
         binutils \
         binutils-devel \
         bison \
+        boost-devel \
         bzip2 \
         bzip2-devel \
         ctags \
@@ -80,6 +87,7 @@ elif [[ "$target_pm" == "$cdst_pm_yum" ]]; then
         tcl \
         xz-devel \
         python3-pip \
+        python3.11 \
         zlib-devel \
         autoconf-archive \
         texinfo
@@ -95,6 +103,19 @@ install_common_pe
 
 # Install CTI, CDST support, and MRNet
 install_mrnet
+check_exit_status
+
+echo "############################################"
+echo "#          Ensuring build system           #"
+echo "############################################"
+
+# meson requires python 3.7 or newer
+python3.11 -m ensurepip --upgrade
+check_exit_status
+
+python3.11 -m pip install meson ninja --trusted-host https://arti.hpc.amslabs.hpecorp.net \
+      --extra-index-url https://arti.hpc.amslabs.hpecorp.net:443/artifactory/api/pypi/dst-pip-master-local/simple \
+      --index-url https://arti.hpc.amslabs.hpecorp.net:443/artifactory/api/pypi/pypi-remote/simple
 check_exit_status
 
 capture_jenkins_build

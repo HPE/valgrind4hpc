@@ -1,9 +1,9 @@
 [submodule "external/cdst_build_library"]
-	path = external/cdst_build_library
+	path = hpe/external/cdst_build_library
 	url = git@github.hpe.com:hpcde/cdst-cdst-build-library.git
 	branch = master
 [submodule "rpmbuild/SOURCES/set_default"]
-	path = rpmbuild/SOURCES/set_default
+	path = hpe/rpmbuild/SOURCES/set_default
 	url = git@github.hpe.com:hpcde/cdeux-set-default.git
 	branch = master
 [submodule "tests/function/cdst-test"]
@@ -11,14 +11,14 @@
 	url = git@github.hpe.com:hpcde/cdst-cdst-test.git
 	branch = master
 [submodule "external/valgrind"]
-	path = external/valgrind
+	path = hpe/external/valgrind
 	url = git@github.hpe.com:hpcde/hpc-cdst-mirror-sourceware-valgrind.git
 	branch = hpe
 [submodule "tests/test_support/googletest"]
 	path = tests/test_support/googletest
 	url = git@github.hpe.com:hpcde/hpc-cdst-mirror-github-google-googletest.git
 	branch = hpe
-[submodule "external/changelog"]
-	path = external/changelog
-	url = git@github.hpe.com:hpcde/devops-changelog.git
-	branch = master
+[submodule "hpe/external/cdst-mrnet"]
+	path = hpe/external/mrnet
+	url = git@github.hpe.com:hpcde/cdst-mrnet.git
+	branch = hpe

@@ -27,3 +27,4 @@ src/apgrind_defs.h -text
 src/apgrind_exception.h -text
 src/apgrind_filters.c -text
 src/apgrind_protocol.h -text
+subprojects/packagefiles/mrnet/hpe.patch binary

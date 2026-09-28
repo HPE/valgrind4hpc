@@ -9,6 +9,13 @@ export LOCAL_BUILD="yes"
 echo -e -n "Running as: "
 id
 
+unhead_git() {
+    if ! git symbolic-ref -q HEAD >/dev/null; then
+	echo "building in detached head - creating temporary branch"
+	git switch -c check-build
+    fi
+}
+
 setup_env() {
   if [[ -z ${VIRTUAL_ENV} ]] && [[ ! -d dstlibvenv ]]; then
     pip3 install virtualenv pip --trusted-host https://arti.hpc.amslabs.hpecorp.net \
@@ -73,6 +80,7 @@ EOF
 }
 
 main() {
+  unhead_git    
   setup_env
   build 
 }

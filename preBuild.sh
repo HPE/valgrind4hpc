@@ -9,6 +9,6 @@ set | grep TARGET || true
 ln -s /workspace /home/jenkins 
 git config --global --add safe.directory /workspace
 
-test -f ./runBuildPrep.sh && ./runBuildPrep.sh
+test -f ./hpe/runBuildPrep.sh && ./hpe/runBuildPrep.sh
 
 echo Exiting $0

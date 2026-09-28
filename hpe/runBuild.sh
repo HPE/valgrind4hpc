@@ -1,4 +1,4 @@
-#!/bin/bash
+2#!/bin/bash
 #
 # runBuild.sh - Build steps for valgrind4hpc
 #
@@ -22,9 +22,10 @@ echo "############################################"
 echo "#            Setup environment.            #"
 echo "############################################"
 
-top_level=$PWD
+hpe="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+top_level="$hpe/.."
 
-source ./external/cdst_build_library/build_lib_gcc
+source "$hpe/external/cdst_build_library/build_lib_gcc"
 
 setup_modules
 
@@ -67,12 +68,12 @@ if [ -z "$nodeps" ]; then
     echo "############################################"
 
     # ensure submodule is checked out
-    if [[ ! -f $top_level/external/valgrind/README ]]; then
+    if [[ ! -f $hpe/external/valgrind/README ]]; then
 	echo "valgrind submodule not checked out..."
 	exit 1
     fi
 
-    cd $top_level/external/valgrind
+    cd $hpe/external/valgrind
     check_exit_status
 
     ./autogen.sh
@@ -85,19 +86,25 @@ if [ -z "$nodeps" ]; then
     check_exit_status
 
     # build manpages
-    cd $top_level/external/valgrind/docs
+    cd $hpe/external/valgrind/docs
     check_exit_status
 
     make $cdst_j_flags man-pages
     check_exit_status
 
-    cd $top_level/external/valgrind
+    cd $hpe/external/valgrind
     check_exit_status
 
     make $cdst_j_flags install
     check_exit_status
 fi
 
+echo "############################################"
+echo "#    Copying subprojects                   #"
+echo "############################################"
+
+"$hpe/wrap.sh" mrnet
+check_exit_status
 
 echo "############################################"
 echo "#          Building valgrind4hpc           #"
@@ -106,16 +113,23 @@ echo "############################################"
 cd $top_level
 check_exit_status
 
-autoreconf -ifv
+CC=$(which gcc) CXX=$(which g++) \
+  meson setup \
+    -Dprefix=$install_dir \
+    -Dlibdir=$install_dir/lib \
+    -Ddebug=true \
+    -Doptimization=2 \
+    -Db_ndebug=true \
+    "$top_level/build" "$top_level"
 check_exit_status
 
-./configure --prefix=$install_dir --with-boost=$CRAY_DYNINST_INSTALL_DIR
+meson compile --verbose -C "$top_level/build"
 check_exit_status
 
-make $cdst_j_flags
+meson test -C "$top_level/build" || true
 check_exit_status
 
-make $cdst_j_flags install
+meson install -C "$top_level/build"
 check_exit_status
 
 # deliver documentation

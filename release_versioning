@@ -68,10 +68,10 @@
 #       If you bump the minor number then reset the revision to 0
 
 major="2"
-minor="13"
-revision="7"
+minor="14"
+revision="0"
 
 # Jenkins will override this
-build_number=""
+build_number="0"
 
 
