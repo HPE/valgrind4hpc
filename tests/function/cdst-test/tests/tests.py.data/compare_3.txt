@@ -1,0 +1,7 @@
+%# wildcard start, and a comment telling you so
+%*
+%# some regexes
+%abc\s*xyz%
+%xyz\s*abc%
+%# and now a wildcard at the end
+%*

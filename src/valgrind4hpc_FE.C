@@ -32,6 +32,7 @@
 // directory traversal
 #include <dirent.h>
 #include <libgen.h>
+#include <filesystem>
 
 // fork / exec
 #include <sys/types.h>
@@ -539,13 +540,25 @@ main(int argc, char** argv)
 
 		std::string valgrind_bin_path;
 		std::string install_libexec_valgrind;
+		std::string nested_dir;
 
 		// get/set environment variables
-		char *benv;
-		if ((benv = getenv(APG_BASE_DIR_ENV)) == NULL) {
-			throw std::runtime_error("VALGRIND4HPC_INSTALL_DIR env variable not set!");
+		bool is_cpe_install = false;
+		std::string basePath;
+		if (char *benv = getenv(APG_BASE_DIR_ENV)) {
+		    is_cpe_install = true;
+		    basePath = benv;
+		} else {
+
+			std::filesystem::path exe_path = std::filesystem::read_symlink("/proc/self/exe");
+			std::filesystem::path parent = exe_path.parent_path().parent_path();
+
+			basePath = parent.string();
+			std::cout << "got basePath " << basePath << "\n";
+
+			// for open source installs we expect nesting under lib,libexex and share
+			nested_dir = "/valgrind4hpc"; 
 		}
-		std::string basePath(benv);
 
 		// check if valgrind exists and set cores base path
 		if (const char* vld = getenv(APG_VALGRIND_DIR_ENV)) {
@@ -554,11 +567,11 @@ main(int argc, char** argv)
 			valgrind_bin_path = user_valgrind_install_path + "/bin";
 			install_libexec_valgrind = user_valgrind_install_path + "/libexec/valgrind/";
 
-		} else{
+		} else {
 			// check for valgrind binary included with install
 			std::string tmp = basePath + "/bin/valgrind";
 			struct stat st;
-			if (stat(tmp.c_str(), &st) == 0) {
+			if (is_cpe_install && stat(tmp.c_str(), &st) == 0) {
 				// use packaged valgrind
 				valgrind_bin_path = tmp;
 				install_libexec_valgrind = basePath + "/libexec/valgrind/";
@@ -634,7 +647,7 @@ main(int argc, char** argv)
 			newPath = mrnetLibexecDir + ":" + newPath;
 
 		// Print warning
-		} else {
+		} else if (is_cpe_install) {
 			fprintf(stderr, "MRNet install location was not found in "
 				"environment. Tool launch may fail. Load the `cray-mrnet` "
 				"module, or set MRNET_INSTALL_DIR to the system MRNet "
@@ -642,7 +655,7 @@ main(int argc, char** argv)
 		}
 
 		// Prepend Valgrind4hpc libexec directory for starter
-		newPath = basePath + "/libexec:" + newPath;
+		newPath = basePath + "/libexec" + nested_dir + ":" + newPath;
 
 		// Set PATH
 		if(setenv("PATH", newPath.c_str(), 1) != 0)
@@ -664,7 +677,7 @@ main(int argc, char** argv)
 
 		// Add every default suppression file in the basePath/share/suppressions directory.
 		// Note that this path *MUST* match the $suppdir defined in the suppressions Makefile.am...
-		std::string suppPath = basePath + "/share/suppressions/";
+		std::string suppPath = basePath + "/share" + nested_dir + "/suppressions/";
 
 		// Check the environment override variable to disable default supressions
 		char *senv = getenv(APG_IGNORE_SUPP_ENV);
@@ -890,8 +903,8 @@ main(int argc, char** argv)
 		dbg_stream << ")" << std::endl;
 
 		// set up cti
-		std::string filterPath    = basePath + "/lib/libvalgrind4hpc_filters.so";
-		std::string dmappWrapPath = basePath + "/lib/dmapp-wrap.so";
+		std::string filterPath    = basePath + "/lib" + nested_dir + "/libvalgrind4hpc_filters.so";
+		std::string dmappWrapPath = basePath + "/lib" + nested_dir + "/dmapp-wrap.so";
 
 		// register signal handler for SIGINT
 		{ struct sigaction action{};
@@ -927,9 +940,9 @@ main(int argc, char** argv)
 				}
 
 				// add dmapp-specific wrapper if present
-				if (cti_addManifestLibrary(mid, dmappWrapPath.c_str())) {
-					dbg_stream << "dmapp wrapper " << dmappWrapPath << " not found" << std::endl;
-				}
+				//if (cti_addManifestLibrary(mid, dmappWrapPath.c_str())) {
+				//		dbg_stream << "dmapp wrapper " << dmappWrapPath << " not found" << std::endl;
+				//}
 			}
 
 			// Add VGDB binary if VGDB mode enabled

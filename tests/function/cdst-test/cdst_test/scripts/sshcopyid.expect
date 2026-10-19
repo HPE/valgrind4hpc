@@ -1,0 +1,35 @@
+#!/usr/bin/env expect
+
+set USER [lindex $argv 0]
+set HOST [lindex $argv 1]
+set KEY [lindex $argv 2]
+set PASSWORD $env(SSHPASS)
+
+spawn ssh-copy-id -i $KEY $USER@$HOST
+set timeout 60
+expect {
+    "continue connecting" {
+        send "yes\n"
+        exp_continue
+    }
+    "password:" {
+        send "$PASSWORD\n"
+        exp_continue
+    }
+    "Password:" {
+        send "$PASSWORD\n"
+        exp_continue
+    }
+    "All keys were skipped" {
+        exp_continue
+    }
+    eof {
+        send_user "all done\n"
+    }
+    timeout {
+        send_user "timed out\n"
+        exit -1
+    }
+}
+lassign [wait] pid spawnid os_error_flag value
+exit $value

@@ -1,0 +1,252 @@
+---
+# hosts.yaml
+#
+# "database" mapping machine names to machine qualities. used when the remote
+# test tool finds hosts and generates reports
+
+# describes the available fields for a host entry. used by the tool to validate
+# loaded values. each field is a list of valid values for that field in a host
+# entry.
+SCHEMA:
+  hostname: foo # optional - resolvable hostname - useful for e.g. uans with only ip addresses
+  cwd: ~/tmp # optional - at test time, run tests here instead of the default location (listed here)
+  wlm:
+  - slurm
+  - pals
+  type:
+  - xc
+  - apollo
+  - cs
+  - everest
+  - shasta13
+  - shasta13
+  - shasta15
+  - shasta15
+  shasta-type: # optional - for shasta machines
+  - ncn # need to create a uai first
+  - uan # can run jobs without creating a uai
+  os:
+  - sles15
+  - sles15sp1
+  - sles15sp2
+  - sles15sp3
+  - rhel80
+  - rhel81
+  - rhel83
+  - rhel84
+  - rhel85
+  arch:
+    - x86
+    - aarch
+
+# xc
+
+horizon:
+  hostname: 172.30.48.180
+  wlm: slurm
+  type: xc
+  os: sles15sp2
+  arch: x86
+
+horizon-aarch:
+  hostname: 172.30.49.177
+  wlm: slurm
+  type: xc
+  os: sles15sp2
+  arch: aarch
+
+jupiter:
+  wlm: slurm
+  type: xc
+  os: sles15
+  arch: x86
+
+kay:
+  hostname: 172.30.54.62
+  wlm: pals
+  type: xc
+  os: sles15sp2
+  arch: x86
+
+kay-aarch:
+  hostname: 172.30.54.66
+  wlm: pals
+  type: xc
+  os: sles15sp2
+  arch: aarch
+
+crystal:
+  wlm: pals
+  type: xc
+  os: sles15sp2
+  arch: x86
+
+swan:
+  wlm: pals
+  type: xc
+  os: sles15sp2
+  arch: x86
+
+# apollo
+
+pea2k:
+  hostname: 172.30.12.88
+  wlm: slurm
+  type: apollo
+  os: rhel84
+  arch: x86
+
+cfa6k:
+  hostname: 172.30.52.194
+  wlm: pals
+  type: apollo
+  os: rhel84
+  arch: x86
+
+fauci:
+  wlm: slurm
+  type: apollo
+  os: sles15sp2
+  arch: x86
+
+wren:
+  wlm: slurm
+  type: apollo
+  os: rhel81
+  arch: x86
+
+# cs
+
+pegasus:
+  hostname: 172.30.79.79
+  wlm: slurm
+  type: cs
+  os: rhel83
+  arch: x86
+
+osprey:
+  wlm: slurm
+  type: cs
+  os: rhel81
+  arch: x86
+
+# everest
+
+pinoak:
+  hostname: 172.30.54.80
+  wlm: slurm
+  type: everest
+  os: sles15sp3
+  arch: x86
+
+# shasta
+
+monster:
+  hostname: monster-ncn-w001
+  wlm: slurm
+  type: shasta13
+  shasta-type: ncn
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp1
+  arch: x86
+
+monster-uan:
+  hostname: 172.29.16.22
+  wlm: slurm
+  type: shasta13
+  shasta-type: uan
+  os: sles15sp1
+  arch: x86
+
+pinot:
+  # unverified
+  wlm: slurm
+  type: shasta13
+  shasta-type: ncn
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp1
+  arch: x86
+
+jolt1:
+  hostname: jolt1-ncn-w001
+  wlm: slurm
+  type: shasta13
+  shasta-type: ncn
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp2
+  arch: x86
+
+jolt1-uan:
+  hostname: 10.103.1.13
+  wlm: slurm
+  type: shasta13
+  shasta-type: uan
+  os: sles15sp2
+  arch: x86
+
+gamora:
+  # unverified
+  hostname: gamora-ncn-m001
+  wlm: slurm
+  type: shasta15
+  shasta-type: ncn
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp2
+  arch: x86
+
+gamora-uan:
+  # gamora uan
+  hostname: 10.102.5.14
+  wlm: slurm
+  type: shasta15
+  shasta-type: uan
+  os: sles15sp2
+  arch: x86
+
+loki:
+  # unverified
+  hostname: loki-ncn-m001
+  wlm: slurm
+  type: shasta15
+  shasta-type: ncn
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp3
+  arch: x86
+
+shandy:
+  # unverified
+  hostname: shandy-ncn-m001
+  wlm: slurm
+  type: shasta15
+  shasta-type: ncn
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp2
+  arch: x86
+
+shandy-uan:
+  # unverified
+  hostname: 10.103.8.16
+  wlm: slurm
+  type: shasta15
+  shasta-type: uan
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp2
+  arch: x86
+
+slice:
+  # uai allocation appears to be broken
+  hostname: slice-ncn-m001
+  wlm: slurm
+  type: shasta14
+  shasta-type: ncn
+  cwd: /lus/%%user%%/tmp
+  os: sles15sp1
+  arch: x86
+
+slice-uan:
+  hostname: 10.101.1.14
+  wlm: slurm # technically it has both!!
+  type: shasta14
+  shasta-type: uan
+  os: sles15sp1
+  arch: x86

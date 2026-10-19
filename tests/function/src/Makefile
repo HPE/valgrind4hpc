@@ -14,6 +14,10 @@ BIN = $(SRC:.c=)
 IN_YELLOW = \033[93m
 NO_COLOR = \033[0m
 
+ifdef LOCALHOST
+CFLAGS += -I../localMPI
+endif
+
 all: $(BIN)
 ifneq ($(SHMEM_PRESENT),yes)
 	@echo -e "$(IN_YELLOW)cray-shmem not found, skipping tests that require it."

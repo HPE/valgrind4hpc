@@ -1,0 +1,3 @@
+---
+# for testing the -c argument
+skip_some: yes

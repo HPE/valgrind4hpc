@@ -1,0 +1,6 @@
+__pycache__/
+avocado-virtual-environment/
+bin/hello_mpi
+logs
+cdst_tests_downloads/
+.venv

@@ -1,0 +1,33 @@
+---
+# products.yaml
+#
+# database of known cdst products and information helpful to the tool for
+# downloading and installing them
+
+products:
+  SCHEMA:
+  atp:
+  cti:
+  gdb4hpc:
+  valgrind4hpc:
+  cray-zmqnet:
+
+# these products don't have automated tests yet
+# ccdb
+# stat
+
+branches:
+- master
+- release-XX.YY
+- release-latest
+- bugfix/PE-XXXXX
+- feature/PE-XXXXX
+- predev/PR-XXX
+
+branches_examples:
+- master
+- release-21.12
+- release-latest
+- bugfix/PE-39119
+- feature/PE-39449
+- predev/PR-425

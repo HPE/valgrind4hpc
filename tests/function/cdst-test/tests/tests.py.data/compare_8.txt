@@ -1,0 +1,6 @@
+%[
+sbcast: %.*%
+scancel: %.*%
+slurmstepd: %.*%
+%]
+%+ Passed MPI_Init

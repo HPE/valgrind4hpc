@@ -1,0 +1,84 @@
+---
+
+# apply at test build time
+build:
+  # load these modules
+  modules: [] 
+  # prepend environment variables
+  prepend-env-vars: {} 
+  # overwrite environment variables
+  environment: {} 
+  # ensure these environment variables are present
+  env-vars-present: [] 
+  # ensure pkg-config can find these packages
+  pkg-config: [] 
+  # build targets
+  targets:
+    # make all
+    all:
+      j: 1 # build this many tests in parallel (make -j)
+      always-rebuild: no # make clean and rebuild each time
+      # load these modules
+      modules: [] 
+      # try to load these modules, but failure isn't fatal
+      optional-modules: [] 
+      # unload these modules
+      unload-modules: [] 
+      directory: "." # run make in this directory
+      can-fail: yes # continue with tests even if build fails
+
+# apply just before running tests
+test:
+  # load these modules
+  modules: [] 
+  # ensure these environment variables are present
+  env-vars-present: [] 
+  # prepend environment variables
+  prepend-env-vars: {} 
+  path: "." # path to directory with tests.py
+  parallel-jobs: 32 # number of tests to run at once
+  skips:
+  - "skip_from_env"
+
+# apply to all wlm invocations, including pre-test sanity checks
+launch:
+  # apply these launcher arguments to every job launch
+  args:
+    slurm: "-t 5:00"
+    alps: ""
+    pals: ""
+    ssh: ""
+    extra: "try to find me!"
+  # if an explicit job allocation is required, allocate with these parameters
+  allocation:
+    slurm: "-N4 -t 3:00:00"
+    alps: "-l select=4:ncpus=4,place=scatter,walltime=3:00:00"
+    pals: "-l select=4:ncpus=4,place=scatter,walltime=3:00:00"
+    ssh: ""
+    always: False
+  # load these modules
+  modules: [] 
+  # ensure these environment variables are present
+  env-vars-present: [] 
+  # overwrite environment variables
+  environment: {} 
+  # prepend environment variables
+  prepend-env-vars: {} 
+
+# options having to do with the test tool itself
+meta:
+  avocado-version: "latest" # version of avocado and avocado plugins to install
+  # don't delete these files upon -r option
+  keep: [] 
+
+# add system specific overrides here
+pegasus:
+  launch:
+    allocation:
+      # Multi-node MPI launches break if they include node007 or node008
+      slurm: "-N4 --exclude=node007,node008 -t 3:00:00"
+
+horizon-aarch:
+  launch:
+    allocation:
+      slurm: "-N4 -t 3:00:00 -p aarch"

@@ -1,0 +1,12 @@
+line 1
+line 2
+%# comment
+%* wildcard
+%<
+un-
+%-
+ordered
+%>
+%[
+ignore
+%]

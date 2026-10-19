@@ -11,7 +11,7 @@ build:
 # apply just before running tests
 test:
   modules:
-  - valgrind4hpc
+#  - valgrind4hpc
   parallel-jobs: 1 # number of tests to run at once
 
 # apply to all wlm invocations, including pre-test sanity checks
@@ -22,6 +22,7 @@ launch:
     slurm: "-t 5:00"
     alps: ""
     ssh: ""
+    localhost: ""
 
 # options having to do with the test tool itself
 meta:
@@ -41,7 +42,7 @@ horizon-aarch:
       all:
         optional-modules:
           # loading shmem modules on horizon-aarch breaks cce
-          - cce/15.0.0
+          - cce
   test:
     parallel-jobs: 10
   launch:

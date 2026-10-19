@@ -1,0 +1,9 @@
+simple comparison test
+with single lines
+and an
+%<
+un
+%-
+ordered
+%>
+section

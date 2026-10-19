@@ -6,17 +6,9 @@
 	path = hpe/rpmbuild/SOURCES/set_default
 	url = git@github.hpe.com:hpcde/cdeux-set-default.git
 	branch = master
-[submodule "tests/function/cdst-test"]
-	path = tests/function/cdst-test
-	url = git@github.hpe.com:hpcde/cdst-cdst-test.git
-	branch = master
 [submodule "external/valgrind"]
 	path = hpe/external/valgrind
 	url = git@github.hpe.com:hpcde/hpc-cdst-mirror-sourceware-valgrind.git
-	branch = hpe
-[submodule "tests/test_support/googletest"]
-	path = tests/test_support/googletest
-	url = git@github.hpe.com:hpcde/hpc-cdst-mirror-github-google-googletest.git
 	branch = hpe
 [submodule "hpe/external/cdst-mrnet"]
 	path = hpe/external/mrnet

@@ -2,6 +2,11 @@
 #
 # Copyright 2014-2025 Hewlett Packard Enterprise Development LP.
 
+googletest_subproject = cmake.subproject('googletest')
+gmock_dep = googletest_subproject.dependency('gmock')
+gtest_dep = googletest_subproject.dependency('gtest')
+googletest_dep = declare_dependency(dependencies: [gmock_dep, gtest_dep])
+
 unit_tests = executable('unit_tests',
   sources: [
     'unit_tests.cpp',
@@ -13,7 +18,7 @@ unit_tests = executable('unit_tests',
     'ExecvpOutput_test.cpp',
   ],
   include_directories: [valgrind4hpc_inc],
-  dependencies: [config_dep, gtest_dep, mrnet_dep, boost_dep,
+  dependencies: [config_dep, googletest_dep, mrnet_dep, boost_dep,
                  thread_dep, dl_dep, rt_dep],
   cpp_args: ['-fPIC'],
   link_args: ['-Wl,--as-needed'],

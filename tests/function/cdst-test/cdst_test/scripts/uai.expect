@@ -1,0 +1,77 @@
+#!/usr/bin/env expect
+
+set NCN_USER [lindex $argv 0]
+set NCN_HOST [lindex $argv 1]
+set NCN_PASSWORD $env(CDST_TESTS_NCN_SSHPASS)
+set NCN_PUBKEY_PATH [lindex $argv 3]
+set DC_USER [lindex $argv 2]
+set DC_PASSWORD $env(SSHPASS)
+set PROMPT [lindex $argv 4]
+
+spawn ssh -t $NCN_USER@$NCN_HOST
+
+# uncomment for debug output:
+exp_internal 1
+set timeout 30
+
+# connect to uai
+expect {
+    "continue connecting" {
+        send "yes\r"
+        exp_continue
+    }
+    "password:" {
+        send -- "$NCN_PASSWORD\r"
+    }
+    "Password:" {
+        send -- "$NCN_PASSWORD\r"
+    }
+    timeout {
+        send_user "timed out\n"
+        exit -1
+    }
+}
+
+# cray-init
+expect {
+    "$PROMPT" {
+        send -- "export CRAY_CONFIG_DIR=/root/$DC_USER/config\r"
+        expect "$PROMPT"
+        send -- "cray init --hostname api-gw-service-nmn.local\r"
+        exp_continue
+    }
+    "Overwrite configuration file at:" {
+        send -- "N\r"
+    }
+    "Username:" {
+        send -- "$DC_USER\r"
+        exp_continue
+    }
+    "Password:" {
+        send -- "$DC_PASSWORD\r"
+    }
+    timeout {
+        send_user "timed out\n"
+        exit -1
+    }
+}
+
+# cray uas create
+expect {
+    "$PROMPT" {
+        send -- "cray uas create --publickey $NCN_PUBKEY_PATH\r"
+        send -- "exit\r"
+        # wait for eof
+        exp_continue
+    }
+    timeout {
+        send_user "timed out\n"
+        exit -1
+    }
+    eof {
+        send_user "all done\n"
+    }
+}
+
+lassign [wait] pid spawnid os_error_flag value
+exit $value

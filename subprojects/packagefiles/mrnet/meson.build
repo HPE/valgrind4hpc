@@ -40,6 +40,7 @@ mrnet_env.set('SOFLAGS', mrnet_libs)
 install_dir = meson.current_build_dir() / 'install'
 mrnet_include_dir = install_dir / 'include'
 mrnet_lib_dir = install_dir / 'lib'
+mrnet_bin_dir = install_dir / 'bin'
 
 sh = find_program('sh')
 make = find_program('make')
@@ -96,10 +97,11 @@ mrnet_config_headers = custom_target('mrnet-config-headers',
 meson.add_install_script(
   sh,
   '-c',
-  'set -e; dest="$MESON_INSTALL_DESTDIR_PREFIX/$1"; mkdir -p "$dest"; cp -a "$2"/libmrnet.so* "$2"/libxplat.so* "$dest"/',
-  'install-mrnet-libraries',
+  'set -e; dest="$MESON_INSTALL_DESTDIR_PREFIX/$1"; dest_bin="$MESON_INSTALL_DESTDIR_PREFIX/libexec/valgrind4hpc"; mkdir -p "$dest"; cp -a "$2"/libmrnet.so* "$2"/libxplat.so* "$dest"/; mkdir -p "$dest_bin"; cp -a "$3"/mrnet_commnode "$dest_bin"/',
+  'install-mrnet-binaries',
   get_option('libdir'),
   mrnet_lib_dir,
+  mrnet_bin_dir,
 )
 
 mrnet_dep = declare_dependency(

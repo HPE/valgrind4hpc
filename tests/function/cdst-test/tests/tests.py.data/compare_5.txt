@@ -1,0 +1,5 @@
+%[
+wlm error: ignore the final line
+%]
+%*
+expected test ends with cdst product output
