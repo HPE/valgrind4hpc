@@ -1,0 +1,345 @@
+{
+	Non-Cray Suppression 1
+        Memcheck:Param
+        ioctl(generic)
+        fun:ioctl
+        ...
+}
+{
+        Non-Cray Suppression 2
+        Memcheck:Param
+        socketcall.sendto(msg)
+        obj:/lib64/libpthread-2.11.3.so
+        ...
+}
+{
+        Non-Cray Suppression 3
+        Memcheck:Free
+        fun:free
+        ...
+        obj:/lib64/libc-2.11.3.so
+}
+{
+        Non-Cray Suppression 4
+        Memcheck:Cond
+        fun:memcpy
+        obj:/usr/lib64/libssl.so.0.9.8
+        ...
+}
+{
+        Non-Cray Suppression 5
+        Memcheck:Cond
+        fun:malloc
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 6
+        Memcheck:Cond
+        obj:/usr/lib64/libssl.so.0.9.8
+        ...
+}
+{
+        Non-Cray Suppression 7
+        Memcheck:Cond
+        fun:is_overlap
+        fun:memcpy
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 8
+        Memcheck:Cond
+        fun:memcpy
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 9
+        Memcheck:Cond
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 10
+        Memcheck:Addr8
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 11
+        Memcheck:Value8
+        fun:__memmove_chk
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 12
+        Memcheck:Cond
+        fun:memmove
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 13
+        Memcheck:Cond
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 14
+        Memcheck:Cond
+        obj:/lib64/libnss_ldap.so.2
+        ...
+}
+{
+        Non-Cray Suppression 15
+        Memcheck:Cond
+        obj:/usr/lib64/libnss_ldap.so.2
+        ...
+}
+{
+        Non-Cray Suppression 16
+        Memcheck:Cond
+        fun:memchr
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 17
+        Memcheck:Cond
+        obj:/lib64/libnss_ldap.so.2
+        ...
+}
+{
+        Non-Cray Suppression 18
+        Memcheck:Value8
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 19
+        Memcheck:Value8
+        obj:/lib64/libc-2.11.3.so
+        ...
+}
+{
+        Non-Cray Suppression 20
+        Memcheck:Value8
+        obj:/lib64/libnss_ldap.so.2
+        ...
+}
+{
+        Non-Cray Suppression 21
+        Memcheck:Value8
+        fun:memcpy
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 22
+        Memcheck:Cond
+        fun:__GI_strcmp
+        obj:/lib64/libc-2.11.3.so
+        ...
+}
+{
+        Non-Cray Suppression 23
+        Memcheck:Cond
+        obj:/usr/lib64/libldap-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 24
+        Memcheck:Cond
+        fun:__strlen_sse42
+        obj:/lib64/libnss_ldap.so.2
+        ...
+}
+{
+        Non-Cray Suppression 25
+        Memcheck:Cond
+        fun:__memmove_chk
+        obj:/usr/lib64/liblber-2.4.so.2.7.1
+        ...
+}
+{
+        Non-Cray Suppression 26
+        Memcheck:Cond
+        obj:/lib64/libc-2.11.3.so
+        ...
+}
+{
+        Non-Cray Suppression 27
+        Memcheck:Cond
+        fun:strncpy
+        obj:/lib64/libnss_ldap.so.2
+        ...
+}
+{
+        Non-Cray Suppression 28
+        Memcheck:Cond
+        fun:is_overlap
+        fun:memcpy
+        obj:/usr/lib64/libssl.so.0.9.8
+        ...
+}
+{
+        Non-Cray Suppression 29
+        Memcheck:Cond
+        fun:__GI_strcmp
+        obj:/lib64/libc-2.11.3.so
+        ...
+}
+{
+        Non-Cray Suppression 30
+        Memcheck:Value8
+        fun:__GI_strcmp
+        obj:/lib64/libc-2.11.3.so
+        ...
+}
+{
+        Non-Cray Suppression 31
+        Memcheck:Value8
+        fun:memcpy
+        obj:/usr/lib64/libssl.so.0.9.8
+        ...
+}
+{
+        Non-Cray Suppression 32
+        Memcheck:Leak
+        fun:malloc
+        obj:/lib64/libc-2.11.3.so
+        ...
+}
+{
+        Non-Cray Suppression 33
+        Memcheck:Leak
+        ...
+        obj:/lib64/libc-2.11.3.so
+}
+{
+        Non-Cray Suppression 34
+        Memcheck:Leak
+        ...
+        obj:/lib64/ld-2.11.3.so
+}
+{
+	Non-Cray Suppression 35
+	Memcheck:Cond
+	obj:/usr/src/packages/BUILD/glibc-2.11.3/
+	...
+}
+{
+	Ignore Conditional Jumps from our library 1
+        Memcheck:Cond
+        obj:/opt/cray/xpmem/0.1-2.0502.64982.5.3.ari/lib64/libxpmem.so.0.0.0
+        ...
+}
+{
+        Ignore Conditional Jumps from our library 2
+        Memcheck:Cond
+        obj:/opt/cray/mpt/7.4.1/gni/mpich-cray/8.3/lib/libmpich_cray.so.3.0.1
+        ...
+}
+
+{
+        Bug 842490 - 1 - False Positive
+        Memcheck:Addr8
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 2 - False Positive
+        Memcheck:Addr4
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 3 - False Positive
+        Memcheck:Addr2
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 4 - False Positive
+        Memcheck:Addr1
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.29.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 1 - B - False Positive
+        Memcheck:Addr8
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 2 - B - False Positive
+        Memcheck:Addr4
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 3 - B - False Positive
+        Memcheck:Addr2
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 4 - B - False Positive
+        Memcheck:Addr1
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.ari/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 1 - C - False Positive
+        Memcheck:Addr8
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 2 - C - False Positive
+        Memcheck:Addr4
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 3 - C - False Positive
+        Memcheck:Addr2
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/lib64/libugni.so.0.6.0
+        ...
+}
+{
+        Bug 842490 - 4 - C - False Positive
+        Memcheck:Addr1
+        obj:/opt/cray/ugni/6.0-1.0502.10863.8.28.gem/lib64/libugni.so.0.6.0
+        ...
+}
+{
+	Thread Error 1
+	Helgrind:Cond
+	fun:__pthread_disable_asynccancel
+	...
+}
+{
+        Thread Error 2
+        Helgrind:Cond
+        fun:__pthread_enable_asynccancel
+	...
+}
+{
+        Thread Error 3
+        Helgrind:Cond
+        fun:__libc_disable_asynccancel
+	...
+}
+{
+        Thread Error 4
+        Helgrind:Cond
+        fun:__libc_enable_asynccancel
+}
+{
+        Thread Error 5
+        Helgrind:Cond
+        fun:__strstr_sse42
+}

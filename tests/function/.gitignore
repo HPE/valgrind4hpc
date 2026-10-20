@@ -1,0 +1,4 @@
+bad_mpi
+bad_shmem_put
+bad_upc_lock
+bad_upc_memput

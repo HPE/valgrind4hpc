@@ -1,0 +1,2 @@
+---
+timeout: 240 # backup timeout. actual timeouts assigned per test in tests.py

@@ -1,0 +1,21 @@
+{
+        Libfabric initialization leak
+        Memcheck:Leak
+        ...
+        fun:fi_verbs_ini
+}
+{
+        libverbs initialization leak
+        Memcheck:Leak
+        ...
+	fun:vrb_init_info
+}
+{
+	libverbs message accept write
+	Memcheck:Param
+	write(buf)
+	fun:write
+	fun:rdma_accept
+	fun:vrb_msg_ep_accept
+	...
+}

@@ -1,0 +1,79 @@
+---
+# apply at test build time
+build:
+  targets:
+    all: # "make all"
+      # try to load these modules, but failure isn't fatal
+      optional-modules:
+      - cray-shmem
+      - cray-openshmemx
+
+# apply just before running tests
+test:
+  modules:
+  - valgrind4hpc
+  parallel-jobs: 1 # number of tests to run at once
+
+# apply to all wlm invocations, including pre-test sanity checks
+launch:
+  # number of ranks is controlled per-test. set these to anything that should
+  # be applied *after* the -n2 -N1 section.
+  args:
+    slurm: "-t 5:00"
+    alps: ""
+    ssh: ""
+
+# options having to do with the test tool itself
+meta:
+  avocado-version: "100.0" # version of avocado and avocado plugins to install
+  # don't delete these files upon -r option
+  keep:
+  - Makefile
+
+# system specific overrides
+horizon:
+  test:
+    parallel-jobs: 32
+
+horizon-aarch:
+  build:
+    targets:
+      all:
+        optional-modules:
+          # loading shmem modules on horizon-aarch breaks cce
+          - cce/15.0.0
+  test:
+    parallel-jobs: 10
+  launch:
+    args:
+      slurm: "-p aarch -t 5:00"
+    environment:
+      SLURM_PARTITION: "aarch"
+
+kay:
+  launch:
+    environment:
+      TMPDIR: /tmp
+    allocation:
+      nodes: 32
+  test:
+    parallel-jobs: 16
+
+pea2k:
+  test:
+    parallel-jobs: 5
+
+pegasus:
+  launch:
+    args:
+      # Multi-node MPI launches break if they include node007 or node008
+      slurm: "--exclude=node007,node008 -t 5:00"
+  test:
+    parallel-jobs: 5
+
+pinoak-login1:
+  launch:
+    environment:
+      SLURM_PARTITION: allnodes
+  test:
+    parallel-jobs: 5

@@ -1,0 +1,12 @@
+_dmappi_queue_handler
+__pthread_initialize_minimal
+__pthread_enable_asynccancel
+__pthread_once_slow
+__libc_init_first
+dmapp_thread_gsync_wait
+dmapp_c_pset_create
+dmapp_get
+shmem_init
+start_pes
+slurm_xcalloc
+slurm_xrecalloc

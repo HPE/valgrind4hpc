@@ -1,0 +1,260 @@
+{
+        Memory leak inside a test from the master test suite
+        Memleak:Leak
+        fun:memalign
+        fun:posix_memalign
+        fun:MTestGetDatatypes
+        fun:main
+}
+{
+        False-Positive from Master Suite 1
+        Memcheck:Cond
+        fun:MPID_nem_xpmem_shutdown
+        fun:MPID_nem_finalize
+        fun:MPIDI_CH3_Finalize
+        fun:MPID_Finalize
+        fun:PMPI_Finalize
+        fun:main
+}
+{
+        False-Positive from Master Suite 2
+        Memcheck:Cond
+        fun:MPID_nem_xpmem_setup
+        fun:MPID_Init
+        fun:MPIR_Init_thread
+        fun:PMPI_Init_thread
+        fun:MTest_Init_thread
+        fun:MTest_Init
+        fun:main
+}
+{
+        False-Positive from Master Suite 3
+        Memcheck:Cond
+        fun:MPIR_Process_status
+        fun:MPIC_Waitall
+        fun:MPIR_CRAY_Bcast_Tree
+        fun:MPIR_CRAY_Bcast
+        fun:MPIR_SMP_Bcast
+        fun:MPIR_Bcast_intra
+        fun:MPIR_Bcast
+        fun:MPIR_CRAY_Allgather
+        fun:MPIDI_CRAY_ugni_coll_init
+	fun:MPIR_Init_thread
+        fun:PMPI_Init_thread
+}
+{
+        False-Positive from Master Suite 4
+        Memcheck:Cond
+        fun:xpmem_get
+        fun:MPID_nem_xpmem_setup
+        fun:MPID_Init
+        fun:MPIR_Init_thread
+        fun:PMPI_Init_thread
+        fun:MTest_Init_thread
+        fun:MTest_Init
+        fun:main
+}
+{
+        False-Positive from Master Suite 5
+        Memcheck:Cond
+        fun:MPIR_Process_status
+        fun:MPIC_Waitall
+        fun:MPIR_CRAY_Bcast_Tree
+        fun:MPIR_CRAY_Bcast
+        ...
+}
+{
+        False positive from OSU benchmark 1
+        Memcheck:Jump
+        fun:MPIR_Process_status
+        fun:MPIC_Waitall
+        fun:MPIR_CRAY_Bcast_Tree
+        fun:MPIR_CRAY_Bcast
+        fun:MPIR_Bcast_impl
+        fun:PMPI_Bcast
+        fun:main
+}
+{
+        False Positive from OSU benchmark 2
+        Memcheck:Jump
+        fun:MPIDI_CH3_PktHandler_CAS
+        fun:MPID_nem_handle_pkt
+        fun:MPID_nem_gni_process_ch3_pkt_w_data
+        fun:MPID_nem_gni_process_recv
+        fun:MPID_nem_gni_check_recvCQ
+        fun:MPID_nem_gni_poll
+        fun:MPID_nem_mpich_blocking_recv
+        fun:MPIDI_CH3I_Progress
+        fun:MPIC_Wait
+        fun:MPIC_Sendrecv
+        fun:MPIR_Barrier_intra
+        fun:MPIR_CRAY_Barrier
+        fun:MPIR_Barrier_impl
+        fun:PMPI_Barrier
+        fun:run_cas_with_flush
+}
+{
+        False Positive general for Conditional Jump 1
+        Memcheck:Cond
+        fun:MPID_nem_xpmem_setup
+        ...
+}
+{
+        False Positive general for Conditional Jump 2
+        Memcheck:Cond
+        fun:xpmem_get
+        ...
+}
+{
+        Memory leak inside a test from the master test suite
+        Memleak:Leak
+        fun:memalign
+        fun:posix_memalign
+        fun:MTestGetDatatypes
+        fun:main
+}
+{
+        Shmem False Positive 1
+        Memcheck:Cond
+        fun:_smai_setup_xpmem
+        ...
+}
+{
+        Shmem False Positive 2
+        Memcheck:Cond
+        fun:xpmem_make
+        ...
+}
+{
+        Shmem False Positive 3
+        Memcheck:Cond
+        fun:_smai_find_segment
+        ...
+}
+{
+        Shmem False Positive 4
+        Memcheck:Cond
+        fun:_smai_dmapp_put
+        ...
+}
+{
+        Shmem False Positive 5
+        Memcheck:Cond
+        fun:_dmappi_put
+        ...
+}
+{
+        Shmem False Positive 6
+        Memcheck:Cond
+        fun:_smai_alltoallv_packed
+        ...
+}
+{
+        Shmem False Positive 7
+        Memcheck:Cond
+        fun:_dmappi_guts_amo_get
+        ...
+}
+{
+        Shmem False Positive 8
+        Memcheck:Cond
+        ...
+        fun:main
+        ...
+}
+{
+        Shmem False Positive 9 - A
+        Memcheck:Addr1
+        fun:basic_memcpy
+        ...
+}
+{
+        Shmem False Positive 9 - B
+        Memcheck:Addr2
+        fun:basic_memcpy
+        ...
+}
+{
+        Shmem False Positive 9 - C
+        Memcheck:Addr4
+        fun:basic_memcpy
+        ...
+}
+{
+        Shmem False Positive 9 -D
+        Memcheck:Addr8
+        fun:basic_memcpy
+        ...
+}
+{
+        Shmem False Positive 9 - E
+        Memcheck:Addr16
+        fun:basic_memcpy
+        ...
+}
+{
+        Shmem False Positive 10
+        Memcheck:Addr8
+        fun:_dmappi_get_event
+        ...
+}
+{
+        Shmem False Positive 11
+        Memcheck:Addr8
+        fun:_dmappi_scatter_ixpe
+        ...
+}
+{
+        Shmem False Positive 12
+        Memcheck:Addr8
+        fun:_dmappi_guts_amo_put
+        ...
+}
+{
+        Shmem False Positive 12 - B
+        Memcheck:Addr8
+        fun:_dmappi_guts_amo_get
+        ...
+}
+{
+        Shmem False Positive 13
+        Memcheck:Addr8
+        fun:_dmappi_scatter_ixpe
+        ...
+}
+{
+        Shmem False Positive 14
+        Memcheck:Addr8
+        fun:_dmappi_terminate_nbi_chain
+        ...
+}
+{
+        Shmem False Positive 15
+        Memcheck:Addr8
+        fun:_dmappi_put
+        ...
+}
+{
+        Shmem False Positive 15 - B
+        Memcheck:Addr8
+        fun:_smai_dmapp_put
+        ...
+}
+{
+        Shmem False Positive 16
+        Memcheck:Addr8
+        obj:/opt/cray/dmapp/7.0.1-1.0502.11080.8.74.gem/lib64/libdmapp.so.1.6.0
+        ...
+}
+{
+	Shmem False Positive 17
+	Memcheck:Value8
+	fun:basic_memcpy
+	...
+}
+{
+        Shmem False Positive 18
+        Memcheck:Value8
+        fun:_dmappi_put
+        ...
+}

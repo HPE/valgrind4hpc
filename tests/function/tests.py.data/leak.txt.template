@@ -1,0 +1,17 @@
+%# This template is modified at test time to fill in the file name and line number of the leak.
+%*
+%.*% bytes in %.*% blocks are definitely lost
+  at __fn__ (in %.*%)
+  by main (in __filename__.c:__linenum__)
+%*
+HEAP SUMMARY:
+  in use at exit: %.*% bytes in %.*% blocks
+
+LEAK SUMMARY:
+   definitely lost: %.*% bytes in %.*% blocks
+   indirectly lost: %.*% bytes in %.*% blocks
+     possibly lost: %.*% bytes in %.*% blocks
+   still reachable: %.*% bytes in %.*% blocks
+
+ERROR SUMMARY: %.*% errors from %.*% contexts (suppressed %.*%)
+%*

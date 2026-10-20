@@ -1,0 +1,9 @@
+# Tcl file sourced by craype module
+
+set install_root <CRAY_PREFIX>
+set VALGRIND4HPC_LEVEL <PKG_VERSION>
+set PE_VALGRIND4HPC_DIR ${install_root}/<PE_PRODUCT>/${VALGRIND4HPC_LEVEL}
+
+source $PE_VALGRIND4HPC_DIR/.set_paths_stub
+
+prepend-path PE_PKG_CONFIG_PATH $PE_VALGRIND4HPC_DIR/lib/pkgconfig

@@ -1,0 +1,136 @@
+{
+	CCE specific issue
+	Memcheck:Leak
+	fun:calloc
+	...
+	obj:/lib64/ld-2.11.3.so
+}
+{
+        GNU specific issue
+        Memcheck:Param
+        socketcall.sendto(msg)
+	obj:/lib64/libc-2.11.3.so
+	...
+}
+{
+	Bug 841631 - 1
+	Memcheck:Leak
+	fun:malloc
+	fun:_pmi_network_allgather 
+	fun:_pmi_allgather
+	fun:_pmi2_kvs_fence
+	fun:PMI2_KVS_Fence
+	fun:MPIDI_PG_SetConnInfo
+	fun:MPID_nem_init
+	fun:MPIDI_CH3_Init
+	fun:MPID_Init
+	fun:MPIR_Init_thread
+	fun:PMPI_Init
+	fun:main
+}
+{
+        Bug 841631 - 2
+        Memcheck:Leak
+        fun:malloc
+        fun:_pmi_network_allgather
+        fun:_pmi_allgatherv
+        fun:_pmi2_kvs_fence
+        fun:PMI2_KVS_Fence
+        fun:MPIDI_PG_SetConnInfo
+        fun:MPID_nem_init
+        fun:MPIDI_CH3_Init
+        fun:MPID_Init
+        fun:MPIR_Init_thread
+        fun:PMPI_Init
+        fun:main
+}
+{
+        Bug 841631 - 3
+        Memcheck:Leak
+   	fun:malloc
+   	fun:_pmi_network_allgather
+	fun:_pmi_allgather
+	fun:_pmi2_kvs_fence
+	fun:PMI2_KVS_Fence
+	fun:MPIDI_PG_SetConnInfo
+   	fun:MPID_nem_init
+   	fun:MPIDI_CH3_Init
+   	fun:MPID_Init
+   	fun:MPIR_Init_thread
+   	fun:PMPI_Init_thread
+   	fun:MTest_Init_thread
+   	fun:MTest_Init_thread
+   	fun:MTest_Init
+   	fun:main	
+}
+{
+        Bug 841631 - 4
+        Memcheck:Leak
+	fun:malloc
+   	fun:_pmi_network_allgather
+	fun:_pmi_allgatherv
+	fun:_pmi2_kvs_fence
+	fun:PMI2_KVS_Fence
+	fun:MPIDI_PG_SetConnInfo
+   	fun:MPID_nem_init
+   	fun:MPIDI_CH3_Init
+   	fun:MPID_Init
+   	fun:MPIR_Init_thread
+   	fun:PMPI_Init_thread
+   	fun:MTest_Init_thread
+}
+{
+	 Bug 841637 - 1
+	 Memcheck:Leak
+ 	 fun:malloc
+   	 fun:ckalloc
+	 fun:avlinit
+	 fun:UDREG_CacheCreate
+	 fun:MPID_nem_gni_dreg_init
+   	 fun:MPID_nem_gni_init
+   	 fun:MPID_nem_init
+   	 fun:MPIDI_CH3_Init
+   	 fun:MPID_Init
+   	 fun:MPIR_Init_thread
+   	 fun:PMPI_Init
+   	 fun:main
+}
+{
+        Bug 841637 - 1 -B
+        Memcheck:Leak
+        fun:malloc
+        fun:ckalloc
+        fun:avlinit
+        fun:UDREG_CacheCreate
+        fun:MPID_nem_gni_dreg_init
+        fun:MPID_nem_gni_init
+        fun:MPID_nem_init
+        fun:MPIDI_CH3_Init
+        fun:MPID_Init
+        fun:MPIR_Init_thread
+        fun:PMPI_Init_thread
+        fun:MTest_Init_thread
+}
+{
+	Bug 841637 - 2
+	Memcheck:Addr4
+   	fun:UDREG_Register
+   	...
+}
+{
+        Bug 841637 - 3
+        Memcheck:Leak
+        fun:malloc
+	fun:ckalloc
+	fun:avlinit
+	fun:UDREG_CacheCreate
+	fun:MPID_nem_gni_dreg_init
+   	fun:MPID_nem_gni_init
+   	fun:MPID_nem_init
+   	fun:MPIDI_CH3_Init
+   	fun:MPID_Init
+   	fun:MPIR_Init_thread
+   	fun:PMPI_Init_thread
+   	fun:MTest_Init_thread
+}
+

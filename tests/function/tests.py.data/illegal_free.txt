@@ -1,0 +1,8 @@
+%*
+Invalid free() / delete / delete[] / realloc()
+%*
+HEAP SUMMARY:
+  in use at exit: %.*% bytes in %.*% blocks
+%*
+ERROR SUMMARY: %[1-9][0-9]*% errors from %[1-9][0-9]*% contexts (suppressed %.*%)
+%*

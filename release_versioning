@@ -1,0 +1,77 @@
+#
+# Release and shared library version control for valgrind4hpc.
+#
+# Copyright 2011-2023 Hewlett Packard Enterprise Development LP.
+#
+# Unpublished Proprietary Information.
+# This unpublished work is protected to trade secret, copyright and other laws.
+# Except as permitted by contract or express written permission of Hewlett Packard Enterprise Development LP.,
+# no part of this work or its content may be used, reproduced or disclosed
+# in any form.
+#
+# Note: After changing this file one must 'autoreconf -ifv' AND 'configure'
+#       needs to be committed.
+#
+# LIBTOOLS VERSIONING SYSTEM
+# --------------------------
+# current, revision, and age are a libtools concept. They are completely
+# orthogonal to the Cray release version system (which correlates with
+# the module name (e.g. cray-cti/1.0.1)), but intertwine with the DSO file
+# names.
+#
+# Libtools flag: -version-info <current>:<revision>:<age>
+#
+# I am not sure where 'current' shows up, but it is to be incremented
+# for any change to the API (and revision zeroed). I think of this as
+# being the most recent API definition.
+#
+# 'revision' should be incremented for any source change whatsoever.
+# I think of this as a count of any type of change since the last
+# incompatible change (i.e, 'current' was incremented).
+#
+# 'age' should be incremented if any interfaces have been added, but
+# zeroed if interfaces were removed or changed. I think if this as a
+# count of API extensions since the last incompatible change (i.e,
+# 'current' was incremented).
+#
+# The following explanation may help to understand the above rules a
+# bit better: consider that there are three possible kinds of reactions
+# from users of your library to changes in a shared library:
+#
+# 1. Programs using the previous version may use the new version as drop-in
+#    replacement, and programs using the new version can also work with the
+#    previous one. In other words, no recompiling nor relinking is needed.
+#    In this case, bump revision only, don’t touch current nor age.
+#
+# 2. Programs using the previous version may use the new version as drop-in
+#    replacement, but programs using the new version may use APIs not present
+#    in the previous one. In other words, a program linking against the new
+#    version may fail with “unresolved symbols” if linking against the old
+#    version at runtime: set revision to 0, bump current and age.
+#
+# 3. Programs may need to be changed, recompiled, and relinked in order to use
+#    the new version. Bump current, set revision and age to 0.
+#
+#
+# RELEASE VERSION
+# ---------------
+# The traditional release version is tracked by the three digit
+# major.minor.revision string.
+#
+# JENKINS INTEGRATION
+# -------------------
+# We now key off the BUILD_NUMBER environment variable from jenkins
+# to get the revision number. We hardcode the revision to "1" if the
+# environment variable is not set.
+# 
+# NOTE: If you bump the major number then reset the minor and revision to 0
+#       If you bump the minor number then reset the revision to 0
+
+major="2"
+minor="13"
+revision="3"
+
+# Jenkins will override this
+build_number=""
+
+

@@ -1,0 +1,6 @@
+%*
+HEAP SUMMARY:
+  in use at exit: %.*% bytes in %.*% blocks
+%*
+ERROR SUMMARY: %.*% errors from %.*% contexts (suppressed %.*%)
+%*

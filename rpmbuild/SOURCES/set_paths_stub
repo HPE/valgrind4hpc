@@ -1,0 +1,9 @@
+proc set_pkgconfig_paths_<CRAY_NAME> { <CRAY_NAME>_DIR } {
+
+  if { ! [ info exists DEFAULT_NAMESPACE ] } {
+    set DEFAULT_NAMESPACE ""
+  }
+
+}
+
+set_pkgconfig_paths_<CRAY_NAME> $PE_VALGRIND4HPC_DIR

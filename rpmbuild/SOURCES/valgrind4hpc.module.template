@@ -1,0 +1,44 @@
+#%Module######################################################################
+ #
+ #       Module <CRAY_NAME>
+ #       <COPYRIGHT>
+ #       UNPUBLISHED PROPRIETARY INFORMATION.
+ #       ALL RIGHTS RESERVED.
+ #
+ conflict <CRAY_NAME>
+
+ set VALGRIND4HPC_LEVEL     <VERSION>
+ set VALGRIND4HPC_BASEDIR   <PREFIX>
+
+ setenv VALGRIND4HPC_INSTALL_DIR     $VALGRIND4HPC_BASEDIR
+ setenv PE_VALGRIND4HPC_MODULE_NAME  <CRAY_NAME>
+
+ set PE_VALGRIND4HPC_DIR $VALGRIND4HPC_BASEDIR
+ source ${VALGRIND4HPC_BASEDIR}/.set_paths_stub
+
+ prepend-path PATH              $VALGRIND4HPC_BASEDIR/bin
+ prepend-path MANPATH           $VALGRIND4HPC_BASEDIR/share/man
+
+ if { [ file exists ${VALGRIND4HPC_BASEDIR}/release_notes.md ] } {
+       set REL_INFO [ exec cat ${VALGRIND4HPC_BASEDIR}/release_notes.md ]
+    } else {
+       set REL_INFO ""
+    }
+
+ proc ModulesHelp { } {
+    global VALGRIND4HPC_BASEDIR
+    global VALGRIND4HPC_LEVEL
+    global REL_INFO
+    puts stderr "The modulefile defines the system paths and"
+    puts stderr "variables for the product <CRAY_NAME>."
+    puts stderr "$REL_INFO"
+    puts stderr "============================================="
+    puts stderr "To re-display <CRAY_NAME>/$VALGRIND4HPC_LEVEL release information,"
+    puts stderr "type:    less $VALGRIND4HPC_BASEDIR/release_info"
+    puts stderr "==============================================\n"
+    puts stderr ""
+ }
+
+  module load cray-mrnet
+
+module-whatis   "Loads Parallel Valgrind tool (<CRAY_NAME>)."

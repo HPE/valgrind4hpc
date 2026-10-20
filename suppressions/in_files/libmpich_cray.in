@@ -1,0 +1,3 @@
+MPID_nem_xpmem_setup
+MPID_Init
+MPIDI_CRAY_Detect_cpuid
